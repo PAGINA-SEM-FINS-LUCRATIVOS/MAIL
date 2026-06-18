@@ -1465,7 +1465,7 @@
         function setTheme(theme) {
             state.theme = theme;
             localStorage.setItem('mailbot_theme', theme);
-            
+
             if (theme === 'light') {
                 document.body.classList.add('light-theme');
             } else {
@@ -1486,7 +1486,7 @@
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
             const hamburger = document.getElementById('hamburgerBtn');
-            
+
             sidebar.classList.toggle('active');
             overlay.classList.toggle('active');
             hamburger.classList.toggle('active');
@@ -1524,7 +1524,7 @@
                     state.totalMessages = data.totalMessages || 0;
                     state.activityLog = data.activityLog || [];
                     state.replies = data.replies || {};
-                    
+
                     if (state.currentEmail) {
                         showEmailDisplay();
                         renderMessages();
@@ -1542,12 +1542,12 @@
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            
+
             const tab = document.getElementById(tabName);
             if (tab) {
                 tab.classList.add('active');
             }
-            
+
             const buttons = document.querySelectorAll('.tab-btn');
             for (let btn of buttons) {
                 if (btn.textContent.toLowerCase().includes(tabName.toLowerCase())) {
@@ -1565,10 +1565,10 @@
             try {
                 const domainsRes = await fetch('https://api.mail.tm/domains');
                 if (!domainsRes.ok) throw new Error('Erro ao obter domínios');
-                
+
                 const domainsData = await domainsRes.json();
                 const domains = domainsData['hydra:member'] || [];
-                
+
                 if (domains.length === 0) throw new Error('Nenhum domínio disponível');
 
                 const domain = domains[0].domain;
@@ -1610,7 +1610,7 @@
                 state.token = tokenData.token;
                 state.messages = [];
                 state.totalEmails++;
-                
+
                 addActivity(`Email criado: ${newEmail}`);
                 saveSession();
 
@@ -1641,13 +1641,13 @@
                 state.accountId = null;
                 state.token = null;
                 state.messages = [];
-                
+
                 const domainsRes = await fetch('https://api.mail.tm/domains');
                 if (!domainsRes.ok) throw new Error('Erro ao obter domínios');
-                
+
                 const domainsData = await domainsRes.json();
                 const domains = domainsData['hydra:member'] || [];
-                
+
                 if (domains.length === 0) throw new Error('Nenhum domínio disponível');
 
                 const domain = domains[0].domain;
@@ -1689,14 +1689,14 @@
                 state.token = tokenData.token;
                 state.messages = [];
                 state.totalEmails++;
-                
+
                 addActivity(`Email atualizado para: ${newEmail}`);
                 saveSession();
 
                 document.getElementById('emailValue').textContent = newEmail;
                 document.getElementById('messageCount').textContent = '0';
                 renderMessages();
-                
+
                 showToast('Email atualizado com sucesso!', 'success');
             } catch (error) {
                 console.error('Erro:', error);
@@ -1744,14 +1744,14 @@
                 state.messages = [];
                 state.autoRefresh = false;
                 if (state.autoRefreshInterval) clearInterval(state.autoRefreshInterval);
-                
+
                 addActivity('Email deletado');
                 saveSession();
-                
+
                 document.getElementById('emailForm').style.display = 'block';
                 document.getElementById('emailDisplay').style.display = 'none';
                 document.getElementById('messageCount').textContent = '0';
-                
+
                 updateStatusBadge();
                 showToast('Email deletado', 'success');
             }
@@ -1769,7 +1769,7 @@
 
             try {
                 let url = `https://api.mail.tm/accounts/${state.accountId}/messages`;
-                
+
                 const res = await fetch(url, {
                     method: 'GET',
                     headers: {
@@ -1781,7 +1781,7 @@
 
                 if (res.status === 404) {
                     url = `https://api.mail.tm/messages?account=${state.accountId}`;
-                    
+
                     const altRes = await fetch(url, {
                         method: 'GET',
                         headers: {
@@ -1815,7 +1815,7 @@
 
         function processMessages(data) {
             const messages = data['hydra:member'] || data || [];
-            
+
             state.messages = (Array.isArray(messages) ? messages : []).map(msg => ({
                 id: msg.id,
                 from: msg.from?.address || msg.from || 'Desconhecido',
@@ -1829,7 +1829,7 @@
             state.totalMessages = state.messages.length;
             saveSession();
             renderMessages();
-            
+
             if (state.messages.length > 0) {
                 showToast(`${state.messages.length} mensagem(ns) encontrada(s)!`, 'success');
                 addActivity(`${state.messages.length} mensagem(ns) sincronizada(s)`);
@@ -1863,69 +1863,104 @@
             `).join('');
         }
 
-        function openMessageModal(id) {
+        async function openMessageModal(id) {
             const msg = state.messages.find(m => m.id === id);
             if (!msg) return;
 
             state.currentMessageId = id;
             const content = document.getElementById('messageModalContent');
-            
-            const replyText = state.replies[id] ? state.replies[id].text : '';
-            
-            const replyForm = `
-                <div class="reply-form">
-                    <div class="reply-form-title">Responder Mensagem</div>
-                    <div class="form-group">
-                        <label class="form-label">Para:</label>
-                        <input type="text" value="${escapeHtml(msg.from)}" readonly style="background: var(--bg-card-hover);">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Assunto:</label>
-                        <input type="text" id="replySubject" placeholder="Re: ${escapeHtml(msg.subject)}" value="Re: ${escapeHtml(msg.subject)}">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Mensagem:</label>
-                        <textarea id="replyBody" placeholder="Digite sua resposta aqui...">${replyText}</textarea>
-                    </div>
-                    <div class="button-group">
-                        <button class="btn-primary" onclick="sendReply('${escapeHtml(msg.from)}', '${escapeHtml(id)}')">
-                            <i class="fas fa-paper-plane"></i> Enviar Resposta
-                        </button>
-                        <button class="btn-secondary" onclick="closeMessageModal()">
-                            <i class="fas fa-times"></i> Cancelar
-                        </button>
-                    </div>
-                </div>
-            `;
-            
+
+            // Mostrar estado de carregamento
             content.innerHTML = `
-                <div class="message-detail-header">
-                    <div class="message-detail-from">
-                        <div class="message-detail-from-label">De:</div>
-                        <div class="message-detail-from-value">${escapeHtml(msg.from)}</div>
-                    </div>
-                    <div class="message-detail-date">${new Date(msg.createdAt).toLocaleString('pt-BR')}</div>
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem; gap: 1rem;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
+                    <p style="color: var(--text-secondary);">Carregando conteúdo da mensagem...</p>
                 </div>
-                
-                <div class="message-detail-subject">${escapeHtml(msg.subject)}</div>
-                
-                <div class="message-detail-body">
-                    ${msg.html ? msg.html : escapeHtml(msg.text).replace(/\n/g, '<br>')}
-                </div>
-                
-                <div class="message-actions">
-                    <button class="btn-success" onclick="markAsRead('${id}')">
-                        <i class="fas fa-check"></i> Marcar como Lida
-                    </button>
-                    <button class="btn-secondary" onclick="deleteMessage('${id}')">
-                        <i class="fas fa-trash"></i> Deletar
-                    </button>
-                </div>
-                
-                ${replyForm}
             `;
-            
             document.getElementById('messageModal').classList.add('active');
+
+            try {
+                // A API mail.tm não envia o corpo na listagem, precisamos buscar individualmente
+                if (!msg.html && (!msg.text || msg.text.length < 5)) {
+                    const res = await fetch(`https://api.mail.tm/messages/${id}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${state.token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (res.ok) {
+                        const fullMsg = await res.json();
+                        msg.text = fullMsg.text || '';
+                        msg.html = fullMsg.html || null;
+                        saveSession();
+                    }
+                }
+
+                const replyText = state.replies[id] ? state.replies[id].text : '';
+
+                const replyForm = `
+                    <div class="reply-form">
+                        <div class="reply-form-title">Responder Mensagem</div>
+                        <div class="form-group">
+                            <label class="form-label">Para:</label>
+                            <input type="text" value="${escapeHtml(msg.from)}" readonly style="background: var(--bg-card-hover);">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Assunto:</label>
+                            <input type="text" id="replySubject" placeholder="Re: ${escapeHtml(msg.subject)}" value="Re: ${escapeHtml(msg.subject)}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Mensagem:</label>
+                            <textarea id="replyBody" placeholder="Digite sua resposta aqui...">${replyText}</textarea>
+                        </div>
+                        <div class="button-group">
+                            <button class="btn-primary" onclick="sendReply('${escapeHtml(msg.from)}', '${escapeHtml(id)}')">
+                                <i class="fas fa-paper-plane"></i> Enviar Resposta
+                            </button>
+                            <button class="btn-secondary" onclick="closeMessageModal()">
+                                <i class="fas fa-times"></i> Cancelar
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                content.innerHTML = `
+                    <div class="message-detail-header">
+                        <div class="message-detail-from">
+                            <div class="message-detail-from-label">De:</div>
+                            <div class="message-detail-from-value">${escapeHtml(msg.from)}</div>
+                        </div>
+                        <div class="message-detail-date">${new Date(msg.createdAt).toLocaleString('pt-BR')}</div>
+                    </div>
+
+                    <div class="message-detail-subject">${escapeHtml(msg.subject)}</div>
+
+                    <div class="message-detail-body">
+                        ${msg.html ? msg.html : escapeHtml(msg.text).replace(/\n/g, '<br>')}
+                    </div>
+
+                    <div class="message-actions">
+                        <button class="btn-success" onclick="markAsRead('${id}')" ${msg.seen ? 'disabled' : ''}>
+                            <i class="fas fa-check"></i> ${msg.seen ? 'Lida' : 'Marcar como Lida'}
+                        </button>
+                        <button class="btn-secondary" onclick="deleteMessage('${id}')">
+                            <i class="fas fa-trash"></i> Deletar
+                        </button>
+                    </div>
+
+                    ${replyForm}
+                `;
+            } catch (error) {
+                content.innerHTML = `
+                    <div style="padding: 2rem; text-align: center; color: var(--danger);">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                        <p>Erro ao carregar mensagem: ${error.message}</p>
+                        <button class="btn-primary" style="margin-top: 1rem;" onclick="openMessageModal('${id}')">Tentar Novamente</button>
+                    </div>
+                `;
+            }
         }
 
         function closeMessageModal() {
@@ -1940,7 +1975,7 @@
                 saveSession();
                 renderMessages();
                 showToast('✓ Marcado como lida', 'success');
-                
+
                 // Atualizar o modal se ainda estiver aberto
                 if (state.currentMessageId === id) {
                     const button = document.querySelector(`[onclick="markAsRead('${id}')"]`);
@@ -1949,7 +1984,7 @@
                         button.innerHTML = '<i class="fas fa-check-double"></i> Marcado como Lida';
                     }
                 }
-                
+
                 addActivity(`Mensagem de ${msg.from} marcada como lida`);
             }
         }
@@ -1988,21 +2023,21 @@
             };
 
             saveSession();
-            
+
             // Mostrar mensagem de sucesso
             const content = document.getElementById('messageModalContent');
             const successMsg = document.createElement('div');
             successMsg.className = 'success-message';
             successMsg.innerHTML = '<i class="fas fa-check-circle"></i> <span>Resposta salva com sucesso!</span>';
             content.insertBefore(successMsg, content.firstChild);
-            
+
             showToast('✓ Resposta enviada com sucesso!', 'success');
             addActivity(`Resposta enviada para: ${to}`);
-            
+
             // Limpar formulário
             document.getElementById('replySubject').value = '';
             document.getElementById('replyBody').value = '';
-            
+
             // Remover mensagem de sucesso após 3 segundos
             setTimeout(() => {
                 successMsg.remove();
@@ -2043,13 +2078,13 @@
                 if (i === 4) token += '-';
                 token += chars[Math.floor(Math.random() * chars.length)];
             }
-            
+
             state.whatsappToken = token;
             document.getElementById('whatsappForm').style.display = 'none';
             document.getElementById('whatsappDisplay').style.display = 'block';
             document.getElementById('tokenDisplay').textContent = token;
             document.getElementById('tokenManual').textContent = token;
-            
+
             generateQRCode(token);
             addActivity(`Token WhatsApp gerado: ${token}`);
             showToast('Token gerado com sucesso!', 'success');
@@ -2058,23 +2093,23 @@
         function generateQRCode(data) {
             const qrContainer = document.getElementById('qrCode');
             qrContainer.innerHTML = '';
-            
+
             const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
             svg.setAttribute('viewBox', '0 0 200 200');
             svg.setAttribute('width', '200');
             svg.setAttribute('height', '200');
-            
+
             const seed = data.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
             const rng = (s) => { let x = Math.sin(s) * 10000; return x - Math.floor(x); };
-            
+
             let cells = '';
             const size = 21;
             const cellSize = 8;
-            
+
             for (let r = 0; r < size; r++) {
                 for (let c = 0; c < size; c++) {
                     const inFinder = (r < 7 && c < 7) || (r < 7 && c >= size - 7) || (r >= size - 7 && c < 7);
-                    
+
                     let filled = false;
                     if (inFinder) {
                         const lr = r % 7, lc = c % 7;
@@ -2082,18 +2117,18 @@
                     } else {
                         filled = rng(seed + r * size + c) > 0.5;
                     }
-                    
+
                     if (filled) {
                         cells += `<rect x="${c * cellSize}" y="${r * cellSize}" width="${cellSize - 1}" height="${cellSize - 1}" rx="1"/>`;
                     }
                 }
             }
-            
+
             svg.innerHTML = `
                 <rect width="200" height="200" fill="white"/>
                 <g fill="#000000">${cells}</g>
             `;
-            
+
             qrContainer.appendChild(svg);
         }
 
@@ -2114,7 +2149,7 @@
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
                 const img = new Image();
-                
+
                 img.onload = function() {
                     canvas.width = 200;
                     canvas.height = 200;
@@ -2125,7 +2160,7 @@
                     link.click();
                     showToast('QR Code baixado!', 'success');
                 };
-                
+
                 img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
             }
         }
@@ -2141,12 +2176,12 @@
             const elapsed = Math.floor((now - state.startTime) / 1000);
             const hours = Math.floor(elapsed / 3600);
             const minutes = Math.floor((elapsed % 3600) / 60);
-            
+
             document.getElementById('totalEmails').textContent = state.totalEmails;
             document.getElementById('totalMessages').textContent = state.totalMessages;
             document.getElementById('whatsappStatus').textContent = state.whatsappConnected ? '1' : '0';
             document.getElementById('uptime').textContent = `${hours}h ${minutes}m`;
-            
+
             updateActivityLog();
         }
 
@@ -2163,7 +2198,7 @@
                 log.innerHTML = '<p style="color: var(--text-secondary); text-align: center;">Nenhuma atividade ainda</p>';
                 return;
             }
-            
+
             log.innerHTML = state.activityLog.map(item => `
                 <div style="padding: 0.75rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
                     <span>${item.text}</span>
@@ -2175,7 +2210,7 @@
         function updateStatusBadge() {
             const badge = document.getElementById('statusBadge');
             const text = document.getElementById('statusText');
-            
+
             if (state.currentEmail) {
                 badge.classList.remove('offline');
                 text.textContent = 'Online';
@@ -2222,7 +2257,7 @@
             link.download = `mailbot-export-${Date.now()}.json`;
             link.click();
             URL.revokeObjectURL(url);
-            
+
             showToast('Dados exportados com sucesso!', 'success');
             addActivity('Dados exportados');
             closeSidebar();
