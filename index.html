@@ -119,6 +119,7 @@
             background-clip: text;
             flex-shrink: 0;
             text-decoration: none;
+            cursor: pointer;
         }
 
         .logo-icon {
@@ -711,6 +712,8 @@
             display: flex;
             flex-direction: column;
             gap: 0.65rem;
+            max-height: 500px;
+            overflow-y: auto;
         }
 
         .message-item {
@@ -1044,12 +1047,6 @@
             max-width: 100%;
         }
 
-        .email-content iframe {
-            width: 100%;
-            border: none;
-            border-radius: 8px;
-        }
-
         .email-meta-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -1298,7 +1295,7 @@
             <!-- ═══════════════════ HERO ═══════════════════ -->
             <section class="hero" id="heroSection" aria-label="Apresentação">
                 <div class="hero-badge">
-                    <i class="fa-solid fa-circle-check"></i> v2.0 Premium — Atualizado
+                    <i class="fa-solid fa-circle-check"></i> v2.1 Premium — Atualizado
                 </div>
                 <h1>Email Temporário<br>de Alta Performance</h1>
                 <p>Gere caixas de entrada descartáveis com leitura real de mensagens. Integre ao WhatsApp para automação inteligente em grupos com bot 24/7 e sessão persistente.</p>
@@ -1427,15 +1424,6 @@
                                         <div class="refresh-indicator" id="autoRefreshIndicator" style="display:none;">
                                             <div class="refresh-ring"></div>
                                             <span>Auto-sync</span>
-                                        </div>
-                                    </div>
-                                    <div class="expiry-bar-wrap">
-                                        <div class="expiry-bar-header">
-                                            <span>Validade da instância</span>
-                                            <span id="expiryCountdown">—</span>
-                                        </div>
-                                        <div class="expiry-bar">
-                                            <div class="expiry-bar-fill" id="expiryBarFill" style="width:100%"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -1709,8 +1697,10 @@
     <script>
     'use strict';
 
-    // ── Configurações da API ──
-    const API_BASE_URL = "https://api.tempmail.lol";
+    // ── Configurações da API mail.tm ──
+    const API_BASE_URL = "https://api.mail.tm";
+    const API_RETRY_ATTEMPTS = 3;
+    const API_RETRY_DELAY = 1000;
 
     // ── Utilitários de segurança ──
     function sanitizeHTML(str) {
@@ -1748,11 +1738,43 @@
         }
     };
 
+    // ── Wrapper de API com retry ──
+    async function apiCall(endpoint, options = {}) {
+        let lastError;
+        for (let attempt = 0; attempt < API_RETRY_ATTEMPTS; attempt++) {
+            try {
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                    ...options,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 429) {
+                        await new Promise(r => setTimeout(r, API_RETRY_DELAY * (attempt + 1)));
+                        continue;
+                    }
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                lastError = error;
+                if (attempt < API_RETRY_ATTEMPTS - 1) {
+                    await new Promise(r => setTimeout(r, API_RETRY_DELAY));
+                }
+            }
+        }
+        throw lastError || new Error('API request failed');
+    }
+
     // ── Estado da aplicação ──
     let state = {
         currentEmail:        CookieManager.get('mailbot_email')         || null,
+        currentAccountId:    CookieManager.get('mailbot_account_id')    || null,
         currentToken:        CookieManager.get('mailbot_token')         || null,
-        emailCreatedAt:      CookieManager.get('mailbot_created_at')    || null,
         messages:            CookieManager.get('mailbot_messages')      || [],
         unreadIds:           CookieManager.get('mailbot_unread')        || [],
         whatsappToken:       null,
@@ -1766,12 +1788,11 @@
     };
 
     let pollingTimer = null;
-    let expiryTimer = null;
-    const EMAIL_TTL = 60 * 60 * 1000; // 1 hora na API tempmail.lol
+    const EMAIL_TTL = 60 * 60 * 1000; // 1 hora
 
     // ── Comandos do bot ──
     const commands = [
-        { name: '.mail',         icon: '<i class="fa-solid fa-envelope"></i>',       description: 'Instancia e exibe um novo endereço temporário corporativo.',           example: '.mail',         result: 'Email gerado: mb_x8a2j@tempmail.lol' },
+        { name: '.mail',         icon: '<i class="fa-solid fa-envelope"></i>',       description: 'Instancia e exibe um novo endereço temporário corporativo.',           example: '.mail',         result: 'Email gerado: mb_x8a2j@mail.tm' },
         { name: '.inbox',        icon: '<i class="fa-solid fa-inbox"></i>',           description: 'Força o barramento a listar mensagens pendentes na caixa.',            example: '.inbox',        result: 'Retornando log de mensagens recebidas.' },
         { name: '.newmail',      icon: '<i class="fa-solid fa-rotate"></i>',          description: 'Deleta o pool anterior gerando rotação limpa de inbox.',               example: '.newmail',      result: 'Pool anterior descartado. Nova rota ativa.' },
         { name: '.bloquearlink', icon: '<i class="fa-solid fa-link-slash"></i>',      description: 'Ativa o módulo de contenção e filtro de URLs nos grupos.',             example: '.bloquearlink', result: 'Módulo Anti-Link operacional e ativo.' },
@@ -1813,18 +1834,17 @@
 
     // ── Restaurar sessão ──
     function restoreSession() {
-        if (state.currentEmail) {
+        if (state.currentEmail && state.currentToken) {
             showEmailDisplay();
             renderMessages();
-            startExpiryTimer();
         }
     }
 
     // ── Salvar sessão ──
     function saveSession() {
         CookieManager.set('mailbot_email',         state.currentEmail);
+        CookieManager.set('mailbot_account_id',    state.currentAccountId);
         CookieManager.set('mailbot_token',         state.currentToken);
-        CookieManager.set('mailbot_created_at',    state.emailCreatedAt);
         CookieManager.set('mailbot_messages',      state.messages);
         CookieManager.set('mailbot_unread',        state.unreadIds);
         CookieManager.set('mailbot_connected',     state.isServerConnected);
@@ -1876,30 +1896,51 @@
         document.getElementById('emailAddress').value = state.currentEmail || '';
     }
 
-    // ── Gerar email (Real API tempmail.lol) ──
+    // ── Gerar email (API mail.tm) ──
     async function generateEmail() {
         const btn = document.getElementById('generateEmailBtn');
         if (btn) btn.disabled = true;
         showToast('Conectando à rede de emails...', 'info');
 
         try {
-            const response = await fetch(`${API_BASE_URL}/generate`);
-            const data = await response.json();
-
-            if (data.error) {
-                throw new Error(data.error);
+            // Gerar domínio aleatório
+            const domainsRes = await apiCall('/domains');
+            if (!domainsRes.hydra_member || domainsRes.hydra_member.length === 0) {
+                throw new Error('Nenhum domínio disponível');
             }
+            const domain = domainsRes.hydra_member[0];
 
-            state.currentEmail   = data.address;
-            state.currentToken   = data.token;
-            state.emailCreatedAt = Date.now();
+            // Gerar email aleatório
+            const randomEmail = `mailbot_${Math.random().toString(36).substring(2, 15)}@${domain.domain}`;
+            const password = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+            // Criar conta
+            const accountRes = await apiCall('/accounts', {
+                method: 'POST',
+                body: JSON.stringify({
+                    address: randomEmail,
+                    password: password
+                })
+            });
+
+            // Fazer login
+            const loginRes = await apiCall('/token', {
+                method: 'POST',
+                body: JSON.stringify({
+                    address: randomEmail,
+                    password: password
+                })
+            });
+
+            state.currentEmail   = randomEmail;
+            state.currentAccountId = accountRes.id;
+            state.currentToken   = loginRes.token;
             state.messages       = [];
             state.unreadIds      = [];
 
             saveSession();
             showEmailDisplay();
             renderMessages();
-            startExpiryTimer();
             initPolling();
             updateStatusBadge();
 
@@ -1907,7 +1948,7 @@
             showToast('Email gerado com sucesso!', 'success');
         } catch (error) {
             console.error('Erro ao gerar email:', error);
-            showToast('Erro ao conectar com o serviço de email.', 'error');
+            showToast('Erro ao conectar com o serviço de email: ' + error.message, 'error');
         } finally {
             if (btn) btn.disabled = false;
         }
@@ -1933,11 +1974,10 @@
         if (!confirm('Deseja encerrar a sessão ativa e apagar o email atual?')) return;
 
         stopPolling();
-        stopExpiryTimer();
 
         state.currentEmail   = null;
+        state.currentAccountId = null;
         state.currentToken   = null;
-        state.emailCreatedAt = null;
         state.messages       = [];
         state.unreadIds      = [];
         state.isServerConnected = false;
@@ -1953,52 +1993,14 @@
         showToast('Instância de email encerrada', 'info');
     }
 
-    // ── Temporizador de expiração ──
-    function startExpiryTimer() {
-        stopExpiryTimer();
-        expiryTimer = setInterval(updateExpiryBar, 1000);
-        updateExpiryBar();
-    }
-
-    function stopExpiryTimer() {
-        if (expiryTimer) { clearInterval(expiryTimer); expiryTimer = null; }
-    }
-
-    function updateExpiryBar() {
-        if (!state.emailCreatedAt) return;
-        const elapsed  = Date.now() - state.emailCreatedAt;
-        const remaining = Math.max(0, EMAIL_TTL - elapsed);
-        const pct       = (remaining / EMAIL_TTL) * 100;
-
-        const fill = document.getElementById('expiryBarFill');
-        const countdown = document.getElementById('expiryCountdown');
-        if (!fill || !countdown) return;
-
-        fill.style.width = pct + '%';
-        fill.style.background = pct > 50
-            ? 'linear-gradient(90deg, var(--success), var(--primary))'
-            : pct > 20
-                ? 'linear-gradient(90deg, var(--warning), var(--danger))'
-                : 'var(--danger)';
-
-        const mins = Math.floor(remaining / 60000);
-        const secs = Math.floor((remaining % 60000) / 1000);
-        countdown.textContent = remaining > 0
-            ? `${mins}m ${secs.toString().padStart(2,'0')}s restantes`
-            : 'Expirado';
-
-        if (remaining === 0) {
-            stopExpiryTimer();
-            showToast('Email expirado. Gere um novo.', 'warning');
-        }
-    }
-
     // ── Polling (auto-refresh) ──
     function initPolling() {
         stopPolling();
-        if (state.currentEmail && state.pollingInterval > 0) {
+        if (state.currentEmail && state.currentToken && state.pollingInterval > 0) {
             pollingTimer = setInterval(() => {
-                if (state.currentEmail) silentRefreshInbox();
+                if (state.currentEmail && state.currentToken) {
+                    silentRefreshInbox();
+                }
             }, state.pollingInterval);
             document.getElementById('autoRefreshIndicator').style.display = 'flex';
         } else {
@@ -2033,7 +2035,7 @@
             playSound();
             showToast('Inbox sincronizado com sucesso', 'success');
         } catch (error) {
-            showToast('Erro ao sincronizar mensagens.', 'error');
+            showToast('Erro ao sincronizar mensagens: ' + error.message, 'error');
         } finally {
             if (btn) btn.disabled = false;
             if (loader) loader.style.display = 'none';
@@ -2047,33 +2049,31 @@
         } catch (e) {}
     }
 
-    // ── Buscar mensagens reais (API tempmail.lol) ──
+    // ── Buscar mensagens reais (API mail.tm) ──
     async function fetchRealMessages(silent = false) {
-        if (!state.currentToken) return;
+        if (!state.currentToken || !state.currentAccountId) return;
 
         try {
-            const response = await fetch(`${API_BASE_URL}/auth/${state.currentToken}`);
-            const data = await response.json();
+            const response = await apiCall(`/accounts/${state.currentAccountId}/messages`, {
+                headers: {
+                    'Authorization': `Bearer ${state.currentToken}`
+                }
+            });
 
-            if (data.token === "invalid") {
-                stopPolling();
-                showToast('Sessão de email inválida ou expirada.', 'error');
-                return;
-            }
-
-            if (!data.email || data.email === null) {
+            if (!response.hydra_member || response.hydra_member.length === 0) {
                 return;
             }
 
             // Mapear mensagens da API para o nosso formato
-            const apiMessages = data.email.map((m, index) => ({
-                id: m.id || `${m.from}-${m.subject}-${m.date}-${index}`,
-                from: m.from,
-                to: m.to,
+            const apiMessages = response.hydra_member.map((m) => ({
+                id: m.id,
+                from: m.from.address,
+                to: m.to[0]?.address || state.currentEmail,
                 subject: m.subject || "Sem Assunto",
-                date: new Date(m.date * 1000), // tempmail.lol envia unix timestamp
-                content: m.body || "Sem conteúdo.",
-                html: m.html || null
+                date: new Date(m.createdAt),
+                content: m.text || "Sem conteúdo.",
+                html: m.html || null,
+                read: m.seen
             }));
 
             const existingIds = state.messages.map(m => m.id);
@@ -2083,7 +2083,7 @@
 
             // Inverter para manter a ordem cronológica correta (mais recentes primeiro)
             state.messages = [...truly_new, ...state.messages];
-            state.unreadIds = [...truly_new.map(m => m.id), ...state.unreadIds];
+            state.unreadIds = [...truly_new.filter(m => !m.read).map(m => m.id), ...state.unreadIds];
 
             saveSession();
             renderMessages();
@@ -2400,7 +2400,7 @@
 
     // ── Exportar dados ──
     function exportData() {
-        const exportState = { ...state, exportedAt: new Date().toISOString(), version: '2.0' };
+        const exportState = { ...state, exportedAt: new Date().toISOString(), version: '2.1' };
         const blob = new Blob([JSON.stringify(exportState, null, 2)], { type: 'application/json' });
         const url  = URL.createObjectURL(blob);
         const a    = document.createElement('a');
@@ -2429,8 +2429,8 @@
                 if (!confirm(`Importar backup de ${data.exportedAt || 'data desconhecida'}?\nIsso substituirá os dados atuais.`)) return;
 
                 state.currentEmail   = data.currentEmail   || null;
+                state.currentAccountId = data.currentAccountId || null;
                 state.currentToken   = data.currentToken   || null;
-                state.emailCreatedAt = data.emailCreatedAt || null;
                 state.messages       = data.messages       || [];
                 state.unreadIds      = data.unreadIds      || [];
                 state.notificationsEnabled = data.notificationsEnabled !== false;
@@ -2458,9 +2458,8 @@
         if (!confirm('Apagar TODOS os dados permanentemente? Esta ação não pode ser desfeita.')) return;
 
         stopPolling();
-        stopExpiryTimer();
 
-        ['mailbot_email','mailbot_token','mailbot_created_at','mailbot_messages',
+        ['mailbot_email','mailbot_account_id','mailbot_token','mailbot_messages',
          'mailbot_unread','mailbot_connected','mailbot_cmd_executed','mailbot_starttime',
          'mailbot_notifications','mailbot_sound','mailbot_htmlview','mailbot_polling'].forEach(k => CookieManager.remove(k));
 
