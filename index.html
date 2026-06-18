@@ -2,44 +2,33 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="MailBot Premium">
-    <meta name="theme-color" content="#000000">
-    <meta name="description" content="Email temporário premium com bot WhatsApp integrado. Gere caixas de entrada descartáveis e automatize grupos WhatsApp com comandos inteligentes. Sessão persistente, bloqueio de links, bot 24/7.">
-    <meta name="keywords" content="email temporário, tempmail, bot whatsapp, automação, grupos whatsapp, email descartável">
-    <meta name="author" content="MailBot Team">
-    <meta name="robots" content="index, follow">
-
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="MailBot Dashboard Premium - Email Temporário & Bot WhatsApp">
-    <meta property="og:description" content="Email temporário premium com bot WhatsApp automático 24/7. Bloqueio de links, sessão persistente, comandos inteligentes.">
-
-    <!-- Fonts & Icons -->
+    <meta name="theme-color" content="#a855f7">
+    <meta name="description" content="Email temporário premium com bot WhatsApp integrado.">
+    <title>MailBot Dashboard Premium</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <title>MailBot Dashboard Premium - Email Temporário & WhatsApp Bot</title>
-
     <style>
-        *, *::before, *::after {
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-touch-callout: none;
             -webkit-user-select: none;
             user-select: none;
-            -webkit-touch-callout: none;
         }
 
         html, body {
             width: 100%;
             height: 100%;
-            overflow-x: hidden;
+            overflow: hidden;
             position: fixed;
+            touch-action: manipulation;
         }
 
         :root {
@@ -48,10 +37,7 @@
             --primary-light: #c084fc;
             --primary-glow: rgba(168, 85, 247, 0.25);
             --success: #10b981;
-            --success-dark: #047857;
-            --success-glow: rgba(16, 185, 129, 0.2);
             --danger: #ef4444;
-            --danger-glow: rgba(239, 68, 68, 0.2);
             --warning: #f59e0b;
             --info: #3b82f6;
             --bg-darker: #000000;
@@ -66,44 +52,52 @@
             --text-tertiary: #475569;
         }
 
+        body.light-theme {
+            --bg-darker: #f8fafc;
+            --bg-dark: #f1f5f9;
+            --bg-card: rgba(255, 255, 255, 0.9);
+            --bg-card-hover: rgba(255, 255, 255, 0.95);
+            --border-color: rgba(0, 0, 0, 0.08);
+            --border-light: rgba(0, 0, 0, 0.12);
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --text-tertiary: #94a3b8;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background: #000000;
+            background: var(--bg-darker);
             color: var(--text-primary);
-            overflow: hidden;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         main {
             width: 100%;
             height: 100%;
-            overflow-y: auto;
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
-            scroll-behavior: smooth;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
-        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 20px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(168,85,247,0.4); }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 20px; opacity: 0.3; }
+        ::-webkit-scrollbar-thumb:hover { opacity: 0.6; }
 
-        /* ── Navigation ── */
         nav {
-            position: fixed;
-            top: 0;
+            position: relative;
             width: 100%;
+            height: 70px;
             z-index: 50;
-            background: rgba(0,0,0,0.88);
+            background: var(--bg-dark);
             backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
             border-bottom: 1px solid var(--border-color);
-            padding: 0 2rem;
+            padding: 0 1.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 1.5rem;
-            height: 70px;
-            padding-top: env(safe-area-inset-top, 0px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
         }
 
         .logo {
@@ -113,7 +107,7 @@
             font-size: 1.3rem;
             font-weight: 900;
             letter-spacing: -0.04em;
-            background: linear-gradient(135deg, #ffffff 50%, #c084fc 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, #06b6d4 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -123,63 +117,35 @@
         }
 
         .logo-icon {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, #221e2b 0%, #0d0d11 100%);
-            border: 1px solid var(--border-accent);
-            border-radius: 10px;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, #06b6d4 100%);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--primary-light);
-            -webkit-text-fill-color: initial;
-            font-size: 1.05rem;
-            box-shadow: 0 0 14px rgba(168,85,247,0.2);
+            color: white;
+            font-size: 1.2rem;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
             flex-shrink: 0;
-        }
-
-        .nav-stats {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-            flex: 1;
-            margin-left: 1.5rem;
-        }
-
-        .stat-item { display: flex; flex-direction: column; gap: 0.1rem; }
-
-        .stat-value {
-            font-size: 1rem;
-            font-weight: 800;
-            color: var(--text-primary);
-            font-family: 'JetBrains Mono', monospace;
-            line-height: 1;
-        }
-
-        .stat-label {
-            font-size: 0.6rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            font-weight: 600;
         }
 
         .nav-right {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 1rem;
             flex-shrink: 0;
         }
 
         .status-badge {
             display: inline-flex;
             align-items: center;
-            gap: 0.45rem;
-            padding: 0.45rem 0.9rem;
-            background: rgba(16,185,129,0.04);
-            border: 1px solid rgba(16,185,129,0.25);
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
             border-radius: 20px;
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             color: var(--success);
             font-weight: 700;
             letter-spacing: 0.04em;
@@ -187,8 +153,8 @@
         }
 
         .status-badge.offline {
-            background: rgba(239,68,68,0.04);
-            border-color: rgba(239,68,68,0.25);
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
             color: var(--danger);
         }
 
@@ -197,16 +163,433 @@
             height: 6px;
             background: currentColor;
             border-radius: 50%;
-            box-shadow: 0 0 7px currentColor;
+            box-shadow: 0 0 8px currentColor;
             animation: blink 2s infinite;
         }
 
         @keyframes blink {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.35; }
+            50% { opacity: 0.3; }
         }
 
-        /* ── Buttons ── */
+        .hamburger {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            transition: all 0.3s;
+            padding: 0;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 2px;
+            background: var(--text-primary);
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        .sidebar {
+            position: fixed;
+            left: -320px;
+            top: 70px;
+            width: 320px;
+            height: calc(100vh - 70px);
+            background: linear-gradient(180deg, var(--bg-dark) 0%, rgba(8, 8, 12, 0.95) 100%);
+            border-right: 1px solid var(--border-color);
+            transition: left 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 40;
+            overflow-y: auto;
+            box-shadow: 8px 0 30px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-content {
+            padding: 1.5rem;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+            border: 1px solid var(--border-accent);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-header-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, #06b6d4 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header-text h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+        }
+
+        .sidebar-header-text p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-title {
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            padding: 0 0.5rem;
+            opacity: 0.7;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.85rem 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            border: 1px solid transparent;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+        }
+
+        .sidebar-item:hover {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%);
+            color: var(--primary-light);
+            border-color: var(--border-accent);
+            transform: translateX(4px);
+        }
+
+        .sidebar-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .sidebar-item.danger:hover {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.1) 100%);
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .theme-toggle {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .theme-btn {
+            flex: 1;
+            padding: 0.65rem;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.25s;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+        }
+
+        .theme-btn.active {
+            background: linear-gradient(135deg, var(--primary) 0%, #06b6d4 100%);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+        }
+
+        .theme-btn:hover:not(.active) {
+            border-color: var(--border-accent);
+            background: rgba(168, 85, 247, 0.05);
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 1rem 0;
+        }
+
+        .sidebar-footer {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        .sidebar-footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-footer strong {
+            color: var(--primary-light);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 70px);
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 39;
+            backdrop-filter: blur(4px);
+        }
+
+        .overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 0.5rem 1.5rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1rem;
+            padding-bottom: 1.5rem;
+            white-space: nowrap;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-light);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card:hover {
+            border-color: var(--border-accent);
+            background: var(--bg-card-hover);
+            box-shadow: 0 12px 30px rgba(168, 85, 247, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .card-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-hover) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            border-color: var(--border-accent);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(168, 85, 247, 0.1);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary) 0%, #06b6d4 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-name {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .email-display {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+            border: 2px solid var(--border-accent);
+            border-radius: 12px;
+            padding: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-light);
+            word-break: break-all;
+            margin: 1rem 0;
+            text-align: center;
+            box-shadow: inset 0 0 20px rgba(168, 85, 247, 0.05);
+        }
+
+        .message-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .message-item:hover {
+            border-color: var(--border-accent);
+            background: var(--bg-card-hover);
+            transform: translateX(4px);
+        }
+
+        .message-from {
+            font-weight: 600;
+            color: var(--primary-light);
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+
+        .message-subject {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .message-preview {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
         button {
             padding: 0.65rem 1.35rem;
             border: 1px solid transparent;
@@ -220,39 +603,29 @@
             align-items: center;
             justify-content: center;
             gap: 0.55rem;
-            position: relative;
             white-space: nowrap;
         }
 
         button:active { transform: scale(0.97); }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, #6366f1 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, #06b6d4 100%);
             color: white;
-            box-shadow: 0 4px 14px var(--primary-glow);
+            box-shadow: 0 4px 14px rgba(168, 85, 247, 0.3);
         }
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 7px 20px rgba(168,85,247,0.4);
+            box-shadow: 0 7px 20px rgba(168, 85, 247, 0.4);
         }
 
         .btn-secondary {
-            background: #0d0d11;
+            background: var(--bg-card);
             color: var(--text-primary);
             border: 1px solid var(--border-light);
         }
         .btn-secondary:hover {
-            background: #14141a;
+            background: var(--bg-card-hover);
             border-color: var(--primary-light);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
-            color: white;
-        }
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 14px rgba(16,185,129,0.3);
         }
 
         .btn-danger {
@@ -261,11 +634,11 @@
         }
         .btn-danger:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 14px rgba(239,68,68,0.3);
+            box-shadow: 0 6px 14px rgba(239, 68, 68, 0.3);
         }
 
         .btn-sm { padding: 0.45rem 0.9rem; font-size: 0.75rem; border-radius: 9px; }
-        .btn-icon { width: 38px; height: 38px; padding: 0; border-radius: 10px; }
+        .btn-icon { width: 40px; height: 40px; padding: 0; border-radius: 10px; }
 
         button:disabled {
             opacity: 0.5;
@@ -273,1303 +646,611 @@
             transform: none !important;
         }
 
-        /* ── Container ── */
-        .container {
-            max-width: 1300px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        /* ── Hero ── */
-        .hero {
-            padding: 7rem 1rem 4.5rem;
-            text-align: center;
-            animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-            margin-top: 70px;
-        }
-
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.45rem 1rem;
-            background: rgba(168,85,247,0.08);
-            border: 1px solid rgba(168,85,247,0.25);
-            border-radius: 20px;
-            font-size: 0.78rem;
-            color: var(--primary-light);
-            font-weight: 600;
-            margin-bottom: 1.75rem;
-            letter-spacing: 0.04em;
-        }
-
-        .hero h1 {
-            font-size: clamp(2.2rem, 7vw, 3.8rem);
-            font-weight: 900;
-            line-height: 1.12;
-            margin-bottom: 1.25rem;
-            letter-spacing: -0.04em;
-            background: linear-gradient(135deg, #ffffff 55%, #a855f7 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero p {
-            font-size: 1.05rem;
-            color: var(--text-secondary);
-            margin-bottom: 2.25rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.7;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .hero-buttons button {
-            padding: 0.9rem 2.2rem;
-            font-size: 0.95rem;
-            border-radius: 14px;
-        }
-
-        .hero-stats {
-            display: flex;
-            gap: 2.5rem;
-            justify-content: center;
-            margin-top: 3rem;
-            flex-wrap: wrap;
-        }
-
-        .hero-stat {
-            text-align: center;
-        }
-
-        .hero-stat-value {
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: white;
-            font-family: 'JetBrains Mono', monospace;
-            letter-spacing: -0.03em;
-        }
-
-        .hero-stat-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            font-weight: 600;
-            margin-top: 0.2rem;
-        }
-
-        /* ── Features ── */
-        .features-section {
-            padding: 2rem 0 6rem;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .section-tag {
-            display: inline-block;
-            padding: 0.3rem 0.85rem;
-            background: rgba(168,85,247,0.08);
-            border: 1px solid rgba(168,85,247,0.2);
-            border-radius: 20px;
-            font-size: 0.72rem;
-            color: var(--primary-light);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-bottom: 0.85rem;
-        }
-
-        .section-title {
-            font-size: 1.75rem;
-            font-weight: 800;
-            letter-spacing: -0.03em;
-            color: white;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.25rem;
-        }
-
-        .feature-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 1.75rem;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(168,85,247,0.3), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .feature-card:hover {
-            border-color: var(--border-accent);
-            transform: translateY(-4px);
-            background: var(--bg-card-hover);
-            box-shadow: 0 12px 30px rgba(168,85,247,0.06);
-        }
-
-        .feature-card:hover::before { opacity: 1; }
-
-        .feature-icon {
-            width: 46px;
-            height: 46px;
-            background: #0d0d11;
-            border: 1px solid var(--border-color);
-            border-radius: 13px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            margin-bottom: 1.1rem;
-            color: var(--primary-light);
-        }
-
-        .feature-card h3 {
-            font-size: 1.05rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
-            font-weight: 700;
-        }
-
-        .feature-card p {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            line-height: 1.65;
-        }
-
-        /* ── Dashboard ── */
-        .dashboard {
-            display: none;
-            padding: 2rem 0 6rem;
-            margin-top: 70px;
-            animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .dashboard.active { display: block; }
-
-        .dashboard-header {
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .dashboard-title {
-            font-size: 1.85rem;
-            font-weight: 900;
-            letter-spacing: -0.04em;
-            color: white;
-        }
-
-        .dashboard-subtitle {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin-top: 0.35rem;
-        }
-
-        /* ── Tabs ── */
-        .tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 2rem;
-            background: #08080c;
-            padding: 0.4rem;
-            border-radius: 14px;
-            border: 1px solid var(--border-color);
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-
-        .tabs::-webkit-scrollbar { display: none; }
-
-        .tab-btn {
-            padding: 0.65rem 1.25rem;
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            border-radius: 10px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            flex-shrink: 0;
-            transition: all 0.2s ease;
-        }
-
-        .tab-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.04); }
-
-        .tab-btn.active {
-            background: #0d0d11;
-            color: var(--text-primary);
-            border: 1px solid var(--border-light);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
-
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeUp 0.3s ease; }
-
-        /* ── Cards ── */
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            margin-bottom: 1.5rem;
-            overflow: hidden;
-        }
-
-        .card-header {
-            padding: 1.5rem 1.75rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-        }
-
-        .card-header h2 {
-            display: flex;
-            align-items: center;
-            gap: 0.7rem;
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
-
-        .card-content { padding: 1.75rem; }
-
-        /* ── Forms ── */
-        .form-group { margin-bottom: 1.35rem; }
-
-        label {
-            display: block;
-            margin-bottom: 0.55rem;
-            font-weight: 600;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-        }
-
-        input[type="text"],
-        input[type="tel"],
-        input[type="email"],
-        input[type="search"],
-        select,
-        textarea {
-            width: 100%;
-            padding: 0.9rem 1.1rem;
-            background: #020203;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-            -webkit-user-select: text;
-            user-select: text;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: #08080c;
-            box-shadow: 0 0 0 3px rgba(168,85,247,0.08);
-        }
-
-        input[readonly] { color: var(--primary-light); cursor: default; }
-
-        .input-group {
-            display: flex;
-            gap: 0.65rem;
-            align-items: center;
-        }
-
-        .input-group input { flex: 1; }
-
-        .copy-btn {
-            padding: 0;
-            width: 46px;
-            height: 46px;
-            background: #0d0d11;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            color: var(--primary-light);
-            font-size: 1rem;
-            flex-shrink: 0;
-        }
-
-        .copy-btn:hover { border-color: var(--primary); background: #14141a; }
-
-        /* ── Email Display ── */
-        .email-display {
-            background: #020203;
-            padding: 1.35rem;
-            border-radius: 14px;
-            border: 1px solid var(--border-accent);
-            margin-bottom: 1.25rem;
-        }
-
-        .email-address {
-            font-size: 1rem;
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--primary-light);
-            word-break: break-all;
-            font-weight: 600;
-        }
-
-        .email-meta {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 0.75rem;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .email-status {
-            font-size: 0.72rem;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        /* Expiry bar */
-        .expiry-bar-wrap {
-            margin-top: 0.85rem;
-        }
-
-        .expiry-bar-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.7rem;
-            color: var(--text-tertiary);
-            margin-bottom: 0.35rem;
-        }
-
-        .expiry-bar {
-            height: 3px;
-            background: rgba(255,255,255,0.06);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .expiry-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--success), var(--primary));
-            border-radius: 10px;
-            transition: width 1s linear;
-        }
-
-        /* ── Inbox ── */
-        .inbox-toolbar {
-            display: flex;
-            gap: 0.65rem;
-            margin-bottom: 1.25rem;
-            align-items: center;
-        }
-
-        .inbox-toolbar input {
-            flex: 1;
-            padding: 0.65rem 1rem;
-            font-size: 0.85rem;
-        }
-
-        .unread-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 20px;
-            height: 20px;
-            padding: 0 5px;
-            background: var(--primary);
-            border-radius: 10px;
-            font-size: 0.68rem;
-            font-weight: 700;
-            color: white;
-        }
-
-        .messages-list {
+        .qr-container {
             display: flex;
             flex-direction: column;
-            gap: 0.65rem;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        .message-item {
-            padding: 1.1rem 1.25rem;
-            background: #020203;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%);
+            border-radius: 16px;
             border: 1px solid var(--border-color);
-            border-radius: 13px;
-            cursor: pointer;
-            transition: all 0.18s ease;
-            position: relative;
         }
 
-        .message-item.unread {
-            border-color: rgba(168,85,247,0.2);
-            background: rgba(168,85,247,0.03);
+        .qr-code {
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
         }
 
-        .message-item.unread::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 50%;
-            transform: translateY(-50%);
-            width: 3px;
-            height: 60%;
-            background: var(--primary);
-            border-radius: 0 3px 3px 0;
+        .qr-code svg {
+            width: 200px;
+            height: 200px;
         }
 
-        .message-item:hover {
-            border-color: var(--border-accent);
-            transform: translateX(3px);
+        .token-display {
+            background: var(--bg-card);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--primary-light);
+            letter-spacing: 0.2em;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
         }
 
-        .message-header-row {
+        .steps {
+            list-style: none;
+            counter-reset: step-counter;
+            margin: 1.5rem 0;
+        }
+
+        .steps li {
+            counter-increment: step-counter;
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 0.5rem;
-            margin-bottom: 0.3rem;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--bg-card);
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
         }
 
-        .message-from {
-            font-weight: 700;
-            color: var(--text-primary);
-            font-size: 0.875rem;
+        .steps li::before {
+            content: counter(step-counter);
             display: flex;
             align-items: center;
-            gap: 0.4rem;
-        }
-
-        .message-date {
-            color: var(--text-tertiary);
-            font-size: 0.72rem;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary) 0%, #06b6d4 100%);
+            color: white;
+            border-radius: 50%;
+            font-weight: 700;
             flex-shrink: 0;
-        }
-
-        .message-subject {
-            color: var(--text-secondary);
-            font-size: 0.82rem;
-            margin-bottom: 0.35rem;
-        }
-
-        .message-preview {
-            color: var(--text-tertiary);
-            font-size: 0.78rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .empty-state {
             text-align: center;
-            padding: 3.5rem 1rem;
+            padding: 3rem 1rem;
             color: var(--text-secondary);
         }
 
         .empty-icon {
-            font-size: 2.5rem;
+            font-size: 3rem;
             margin-bottom: 1rem;
-            color: var(--primary-light);
-            opacity: 0.6;
+            opacity: 0.5;
         }
 
-        .empty-state p { font-size: 0.9rem; }
-        .empty-state small { font-size: 0.78rem; color: var(--text-tertiary); margin-top: 0.4rem; display: block; }
-
-        /* ── Loading Spinner ── */
-        .spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255,255,255,0.1);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-            display: inline-block;
+        input[type="text"],
+        input[type="tel"] {
+            flex: 1;
+            padding: 0.65rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.3s;
         }
 
-        @keyframes spin { to { transform: rotate(360deg); } }
+        input[type="text"]:focus,
+        input[type="tel"]:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            background: var(--bg-card-hover);
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
+        }
 
-        /* ── QR / Token ── */
-        .qr-display {
-            background: #020203;
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 18px;
-            padding: 2rem;
-            text-align: center;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 100;
+            max-width: 300px;
         }
 
-        .qr-code-container {
-            background: white;
-            padding: 1.1rem;
-            border-radius: 16px;
-            margin: 1.25rem 0;
-            display: inline-block;
-        }
-
-        .qr-code-container svg { width: 180px; height: 180px; }
-
-        .token-display {
-            background: #0d0d11;
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 1.35rem;
-            margin: 1.25rem 0;
-        }
-
-        .token-label {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            margin-bottom: 0.65rem;
-            font-weight: 600;
-        }
-
-        .token-value {
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--primary-light);
-            text-align: center;
-            letter-spacing: 6px;
-            font-family: 'JetBrains Mono', monospace;
-            margin-bottom: 1rem;
-        }
-
-        /* ── Commands ── */
-        .command-illustration {
-            background: #020203;
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 1.35rem;
-            transition: border-color 0.25s ease;
-        }
-
-        .command-illustration:hover { border-color: var(--border-accent); }
-
-        .command-header {
-            display: flex;
-            align-items: center;
-            gap: 0.7rem;
-            margin-bottom: 0.65rem;
-        }
-
-        .command-icon {
-            width: 34px;
-            height: 34px;
-            background: #0d0d11;
-            border: 1px solid var(--border-color);
-            border-radius: 9px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            color: var(--primary-light);
-        }
-
-        .command-name {
-            font-weight: 700;
-            color: white;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.95rem;
-        }
-
-        .command-description {
-            font-size: 0.83rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.85rem;
-            line-height: 1.55;
-        }
-
-        .command-example {
-            background: #0d0d11;
-            border-left: 3px solid var(--primary);
-            padding: 0.7rem 0.9rem;
-            border-radius: 0 8px 8px 0;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.82rem;
-            color: var(--primary-light);
-            margin-bottom: 0.4rem;
-        }
-
-        .command-result {
-            background: #0d0d11;
-            border-left: 3px solid var(--success);
-            padding: 0.7rem 0.9rem;
-            border-radius: 0 8px 8px 0;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.82rem;
+        .toast.success {
+            border-color: rgba(16, 185, 129, 0.3);
             color: var(--success);
         }
 
-        /* ── Log Terminal ── */
-        .log-terminal {
-            background: #020203;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1.1rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.78rem;
-            color: #a7f3d0;
-            max-height: 200px;
-            overflow-y: auto;
-            margin-top: 1.1rem;
-            text-align: left;
+        .toast.error {
+            border-color: rgba(239, 68, 68, 0.3);
+            color: var(--danger);
         }
 
-        .log-line {
-            margin-bottom: 0.35rem;
-            line-height: 1.5;
-            display: flex;
-            gap: 0.65rem;
-        }
-
-        .log-time { color: var(--text-tertiary); flex-shrink: 0; }
-
-        /* ── Modal ── */
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.92);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-            animation: fadeIn 0.18s ease;
-        }
-
-        .modal.active { display: flex; }
-
-        .modal-content {
-            background: #08080c;
-            border-radius: 22px;
-            max-width: 640px;
-            width: 100%;
-            border: 1px solid var(--border-light);
-            max-height: 88vh;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .modal-header {
-            padding: 1.5rem 1.75rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 1rem;
-            position: sticky;
-            top: 0;
-            background: #08080c;
-            z-index: 1;
-        }
-
-        .modal-header-info h3 {
-            font-weight: 700;
-            color: #fff;
-            font-size: 1rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .modal-header-info p {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        .modal-close {
-            background: #0d0d11;
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-
-        .modal-close:hover { color: white; border-color: var(--primary); }
-
-        .modal-body { padding: 1.75rem; flex: 1; }
-
-        .modal-footer {
-            padding: 1.25rem 1.75rem;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            gap: 0.65rem;
-            justify-content: flex-end;
-        }
-
-        .email-content {
-            background: #020203;
-            padding: 1.35rem;
-            border-radius: 14px;
-            font-size: 0.9rem;
-            line-height: 1.75;
-            border: 1px solid var(--border-color);
-            color: #e2e8f0;
-            word-wrap: break-word;
-            white-space: pre-wrap;
-            -webkit-user-select: text;
-            user-select: text;
-            min-height: 120px;
-        }
-
-        .email-content.html-mode {
-            white-space: normal;
-        }
-
-        .email-content.html-mode * {
-            max-width: 100%;
-        }
-
-        .email-meta-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-            margin-bottom: 1.25rem;
-        }
-
-        .email-meta-item {
-            background: #0d0d11;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 0.75rem 1rem;
-        }
-
-        .email-meta-item label {
-            font-size: 0.65rem;
-            color: var(--text-tertiary);
-            margin-bottom: 0.25rem;
-        }
-
-        .email-meta-item p {
-            font-size: 0.82rem;
-            color: var(--text-primary);
-            font-weight: 500;
-            word-break: break-all;
-        }
-
-        /* ── Settings ── */
-        .settings-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.1rem;
-        }
-
-        .setting-card {
-            background: #020203;
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 1.35rem;
-        }
-
-        .setting-label {
-            font-weight: 700;
-            color: white;
-            margin-bottom: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 0.45rem;
-            font-size: 0.82rem;
-        }
-
-        /* ── Security Modules ── */
-        .security-module {
-            padding: 1.1rem 1.25rem;
-            background: #020203;
-            border-radius: 13px;
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-        }
-
-        .security-module-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 9px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            flex-shrink: 0;
-        }
-
-        .security-module-body h4 {
-            font-size: 0.875rem;
-            font-weight: 700;
-            margin-bottom: 0.3rem;
-        }
-
-        .security-module-body p {
-            font-size: 0.82rem;
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
-
-        /* ── Toast ── */
-        .toast {
-            position: fixed;
-            bottom: 28px;
-            right: 28px;
-            background: #0d0d11;
-            border: 1px solid var(--border-light);
-            border-radius: 13px;
-            padding: 1rem 1.4rem;
-            color: var(--text-primary);
-            z-index: 200;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-weight: 500;
-            animation: slideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            max-width: 360px;
-            font-size: 0.875rem;
-        }
-
-        .toast.success { border-color: rgba(16,185,129,0.4); }
-        .toast.error { border-color: rgba(239,68,68,0.4); }
-        .toast.info { border-color: rgba(168,85,247,0.4); }
-        .toast.warning { border-color: rgba(245,158,11,0.4); }
-
-        .toast-icon { font-size: 1rem; flex-shrink: 0; }
-        .toast.success .toast-icon { color: var(--success); }
-        .toast.error .toast-icon { color: var(--danger); }
-        .toast.info .toast-icon { color: var(--primary-light); }
-        .toast.warning .toast-icon { color: var(--warning); }
-
-        /* ── Animations ── */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
+        .toast.info {
+            border-color: rgba(168, 85, 247, 0.3);
+            color: var(--primary-light);
         }
 
         @keyframes slideIn {
-            from { transform: translateX(110%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.out {
+            animation: slideOut 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         @keyframes slideOut {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(110%); opacity: 0; }
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
         }
 
-        /* ── Auto-refresh indicator ── */
-        .refresh-indicator {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.72rem;
-            color: var(--text-tertiary);
+        .footer {
+            border-top: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 3rem;
         }
 
-        .refresh-ring {
-            width: 14px;
-            height: 14px;
-            border: 1.5px solid rgba(255,255,255,0.1);
-            border-top-color: var(--success);
-            border-radius: 50%;
-            animation: spin 2s linear infinite;
-        }
-
-        /* ── iOS PWA Banner ── */
-        .ios-pwa-banner {
+        .modal {
             display: none;
             position: fixed;
-            bottom: 0;
+            top: 0;
             left: 0;
-            right: 0;
-            background: #0d0d11;
-            border-top: 1px solid var(--border-light);
-            padding: 1.1rem 1.5rem;
-            z-index: 90;
-            padding-bottom: max(1.1rem, env(safe-area-inset-bottom));
-        }
-
-        .ios-pwa-inner {
-            display: flex;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 200;
             align-items: center;
-            gap: 1rem;
+            justify-content: center;
+            padding: 1rem;
         }
 
-        .ios-pwa-banner .btn-close {
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: scale(0.95);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
             background: transparent;
             border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
             color: var(--text-secondary);
-            font-size: 1.1rem;
-            padding: 0.25rem;
-            flex-shrink: 0;
+            transition: color 0.3s;
+            padding: 0;
+            width: auto;
+            height: auto;
         }
 
-        /* ── Responsive ── */
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         @media (max-width: 768px) {
-            nav { padding: 0 1rem; height: 60px; }
-            .nav-stats { display: none; }
-            .hero { padding: 5rem 1rem 3rem; margin-top: 60px; }
-            .dashboard { margin-top: 60px; padding: 1.25rem 0 5rem; }
-            .container { padding: 0 1rem; }
-            .card-header { padding: 1.1rem 1.25rem; }
-            .card-content { padding: 1.25rem; }
-            .toast { left: 16px; right: 16px; max-width: none; bottom: 16px; }
-            .hero-stats { gap: 1.5rem; }
-            .email-meta-row { grid-template-columns: 1fr; }
-            .modal-footer { flex-direction: column; }
-        }
+            nav {
+                padding: 0 1rem;
+            }
 
-        @media (max-width: 480px) {
-            .hero h1 { font-size: 2rem; }
-            .hero-buttons button { padding: 0.8rem 1.5rem; font-size: 0.9rem; }
-            .dashboard-title { font-size: 1.5rem; }
+            .content {
+                padding: 1rem 0.5rem;
+            }
+
+            .container {
+                padding: 0 0.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .toast {
+                bottom: 1rem;
+                right: 1rem;
+                left: 1rem;
+                max-width: none;
+            }
+
+            .tabs {
+                overflow-x: auto;
+            }
+
+            .tab-btn {
+                padding: 0.5rem 1rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .button-group button {
+                width: 100%;
+            }
+
+            .sidebar {
+                width: 280px;
+                left: -280px;
+            }
         }
     </style>
 </head>
 <body>
-
-    <!-- ═══════════════════ NAVIGATION ═══════════════════ -->
-    <nav role="navigation" aria-label="Navegação principal">
-        <a class="logo" href="#" onclick="goToHome(); return false;" aria-label="MailBot Home">
-            <div class="logo-icon"><i class="fa-solid fa-bolt" aria-hidden="true"></i></div>
+    <nav>
+        <div class="logo">
+            <div class="logo-icon"><i class="fas fa-envelope"></i></div>
             <span>MailBot</span>
-        </a>
-
-        <div class="nav-stats" aria-label="Estatísticas">
-            <div class="stat-item">
-                <div class="stat-value" id="emailCount">0</div>
-                <div class="stat-label">Emails</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" id="uptime">0h 0m</div>
-                <div class="stat-label">Uptime</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" id="unreadCount">0</div>
-                <div class="stat-label">Não lidos</div>
-            </div>
         </div>
-
         <div class="nav-right">
-            <div class="status-badge offline" id="statusBadge" aria-live="polite">
-                <div class="status-dot"></div>
+            <div id="statusBadge" class="status-badge offline">
+                <span class="status-dot"></span>
                 <span id="statusText">Offline</span>
             </div>
-            <button class="btn-primary btn-sm" onclick="goToDashboard()" aria-label="Acessar painel">
-                <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
-                <span class="hide-xs">Painel</span>
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()">
+                <span></span>
+                <span></span>
+                <span></span>
             </button>
         </div>
     </nav>
 
-    <main role="main" id="mainScroll">
-        <div class="container">
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-content">
+            <div class="sidebar-header">
+                <div class="sidebar-header-icon"><i class="fas fa-cog"></i></div>
+                <div class="sidebar-header-text">
+                    <h3>Menu</h3>
+                    <p>Configurações e Opções</p>
+                </div>
+            </div>
 
-            <!-- ═══════════════════ HERO ═══════════════════ -->
-            <section class="hero" id="heroSection" aria-label="Apresentação">
-                <div class="hero-badge">
-                    <i class="fa-solid fa-circle-check"></i> v2.1 Premium — Atualizado
-                </div>
-                <h1>Email Temporário<br>de Alta Performance</h1>
-                <p>Gere caixas de entrada descartáveis com leitura real de mensagens. Integre ao WhatsApp para automação inteligente em grupos com bot 24/7 e sessão persistente.</p>
-                <div class="hero-buttons">
-                    <button class="btn-primary" onclick="goToDashboard()">
-                        <i class="fa-solid fa-rocket" aria-hidden="true"></i> Acessar Painel
-                    </button>
-                    <button class="btn-secondary" onclick="scrollToFeatures()">
-                        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i> Saiba Mais
-                    </button>
-                </div>
-                <div class="hero-stats">
-                    <div class="hero-stat">
-                        <div class="hero-stat-value">99.9%</div>
-                        <div class="hero-stat-label">Uptime</div>
-                    </div>
-                    <div class="hero-stat">
-                        <div class="hero-stat-value">&lt;1s</div>
-                        <div class="hero-stat-label">Latência</div>
-                    </div>
-                    <div class="hero-stat">
-                        <div class="hero-stat-value">24/7</div>
-                        <div class="hero-stat-label">Bot Ativo</div>
-                    </div>
-                    <div class="hero-stat">
-                        <div class="hero-stat-value">100%</div>
-                        <div class="hero-stat-label">Anônimo</div>
-                    </div>
-                </div>
-            </section>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Navegação</div>
+                <button class="sidebar-item" onclick="switchTab('email'); closeSidebar()">
+                    <i class="fas fa-envelope"></i>
+                    <span>Email Temporário</span>
+                </button>
+                <button class="sidebar-item" onclick="switchTab('whatsapp'); closeSidebar()">
+                    <i class="fas fa-comments"></i>
+                    <span>WhatsApp Bot</span>
+                </button>
+                <button class="sidebar-item" onclick="switchTab('dashboard'); closeSidebar()">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </button>
+            </div>
 
-            <!-- ═══════════════════ FEATURES ═══════════════════ -->
-            <section class="features-section" id="featuresSection" aria-label="Funcionalidades">
-                <div class="section-header">
-                    <div class="section-tag">Recursos</div>
-                    <h2 class="section-title">Tudo que você precisa</h2>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Aparência</div>
+                <div class="theme-toggle">
+                    <button class="theme-btn active" id="darkThemeBtn" onclick="setTheme('dark')">
+                        <i class="fas fa-moon"></i> Escuro
+                    </button>
+                    <button class="theme-btn" id="lightThemeBtn" onclick="setTheme('light')">
+                        <i class="fas fa-sun"></i> Claro
+                    </button>
                 </div>
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="fa-solid fa-envelope-circle-check"></i></div>
-                        <h3>Email Temporário Real</h3>
-                        <p>Gere endereços descartáveis e leia mensagens reais via API. Inbox sincronizado automaticamente com notificações instantâneas.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="fa-brands fa-whatsapp"></i></div>
-                        <h3>Bot WhatsApp</h3>
-                        <p>Conecte seu WhatsApp e receba emails automaticamente. O bot responde a comandos e gerencia grupos 24/7 sem parar.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
-                        <h3>Proteção Total</h3>
-                        <p>Bloqueio automático de links, criptografia de dados e sessão persistente via cookies seguros. Seus dados sempre protegidos.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="fa-solid fa-gauge-high"></i></div>
-                        <h3>Velocidade Extrema</h3>
-                        <p>Interface otimizada para carregar em milissegundos. Funciona perfeitamente em todas as redes móveis e WiFi.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="fa-solid fa-mobile-screen"></i></div>
-                        <h3>Multiplataforma Nativo</h3>
-                        <p>Use no celular, tablet ou computador. Sincronização automática e transparente via cookies criptografados seguros.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="fa-solid fa-robot"></i></div>
-                        <h3>Automação Avançada</h3>
-                        <p>Comandos personalizáveis, logs em tempo real, respostas automáticas e gerenciamento completo de permissões.</p>
-                    </div>
-                </div>
-            </section>
+            </div>
 
-            <!-- ═══════════════════ DASHBOARD ═══════════════════ -->
-            <section class="dashboard" id="dashboard" aria-label="Painel de controle">
-                <div class="dashboard-header">
-                    <h1 class="dashboard-title">Painel de Controle</h1>
-                    <p class="dashboard-subtitle">Gerencie suas instâncias de comunicação em tempo real</p>
-                </div>
+            <div class="sidebar-divider"></div>
 
-                <div class="tabs" role="tablist" aria-label="Seções do painel">
-                    <button class="tab-btn active" onclick="switchTab('email', this)" role="tab" aria-selected="true">
-                        <i class="fa-solid fa-envelope" aria-hidden="true"></i> Email
-                    </button>
-                    <button class="tab-btn" onclick="switchTab('whatsapp', this)" role="tab">
-                        <i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp
-                    </button>
-                    <button class="tab-btn" onclick="switchTab('commands', this)" role="tab">
-                        <i class="fa-solid fa-terminal" aria-hidden="true"></i> Comandos
-                    </button>
-                    <button class="tab-btn" onclick="switchTab('settings', this)" role="tab">
-                        <i class="fa-solid fa-gear" aria-hidden="true"></i> Configurações
-                    </button>
-                </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Comunidade</div>
+                <a href="https://discord.gg/yKjpB2CWT4" target="_blank" class="sidebar-item">
+                    <i class="fab fa-discord"></i>
+                    <span>Discord</span>
+                </a>
+                <a href="https://youtube.com/@apelawar_yt" target="_blank" class="sidebar-item">
+                    <i class="fab fa-youtube"></i>
+                    <span>YouTube</span>
+                </a>
+                <button class="sidebar-item" onclick="openCreatorModal(); closeSidebar()">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Sobre o Criador</span>
+                </button>
+            </div>
 
-                <!-- ── Email Tab ── -->
-                <div id="emailTab" class="tab-content active" role="tabpanel">
-                    <div class="card">
-                        <div class="card-header">
-                            <h2><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Gerador de Instâncias</h2>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Ferramentas</div>
+                <button class="sidebar-item" onclick="exportData()">
+                    <i class="fas fa-download"></i>
+                    <span>Exportar Dados</span>
+                </button>
+                <button class="sidebar-item" onclick="copyCurrentEmail()">
+                    <i class="fas fa-copy"></i>
+                    <span>Copiar Email</span>
+                </button>
+                <button class="sidebar-item" onclick="openSettings()">
+                    <i class="fas fa-sliders-h"></i>
+                    <span>Configurações</span>
+                </button>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Perigo</div>
+                <button class="sidebar-item danger" onclick="clearAllData()">
+                    <i class="fas fa-trash-alt"></i>
+                    <span>Limpar Dados</span>
+                </button>
+            </div>
+
+            <div class="sidebar-footer">
+                <p><strong>MailBot Premium</strong></p>
+                <p>v4.1 - Otimizado</p>
+                <p style="margin-top: 0.75rem;">Criado por</p>
+                <p><strong>APELA WAR</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+    <main>
+        <div class="content-wrapper">
+            <div class="content">
+                <div class="container">
+                    <div class="tabs">
+                        <button class="tab-btn active" onclick="switchTab('email')">
+                            <i class="fas fa-envelope"></i> Email Temporário
+                        </button>
+                        <button class="tab-btn" onclick="switchTab('whatsapp')">
+                            <i class="fas fa-comments"></i> WhatsApp Bot
+                        </button>
+                        <button class="tab-btn" onclick="switchTab('dashboard')">
+                            <i class="fas fa-chart-line"></i> Dashboard
+                        </button>
+                    </div>
+
+                    <!-- Dashboard Tab -->
+                    <div id="dashboard" class="tab-content">
+                        <div class="stats-grid" id="statsGrid">
+                            <div class="stat-card">
+                                <div class="stat-icon"><i class="fas fa-envelope"></i></div>
+                                <div class="stat-number" id="totalEmails">0</div>
+                                <div class="stat-name">Emails Criados</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon"><i class="fas fa-inbox"></i></div>
+                                <div class="stat-number" id="totalMessages">0</div>
+                                <div class="stat-name">Mensagens Recebidas</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon"><i class="fas fa-comments"></i></div>
+                                <div class="stat-number" id="whatsappStatus">0</div>
+                                <div class="stat-name">Bots Conectados</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                                <div class="stat-number" id="uptime">0h</div>
+                                <div class="stat-name">Tempo Online</div>
+                            </div>
                         </div>
-                        <div class="card-content">
-                            <!-- Estado: sem email -->
-                            <div id="emailForm">
-                                <button class="btn-primary" id="generateEmailBtn" onclick="generateEmail()" style="width:100%; padding:1.1rem; font-size:1rem; border-radius:14px;">
-                                    <i class="fa-solid fa-plus" aria-hidden="true"></i> Gerar Email Descartável
+
+                        <div class="card">
+                            <div class="card-title">Atividade Recente</div>
+                            <div id="activityLog" style="margin-top: 1rem;">
+                                <p style="color: var(--text-secondary); text-align: center;">Nenhuma atividade ainda</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Email Tab -->
+                    <div id="email" class="tab-content active">
+                        <div id="emailForm" class="card">
+                            <div style="text-align: center; padding: 2rem 0;">
+                                <div class="empty-icon"><i class="fas fa-envelope"></i></div>
+                                <h2 style="margin-bottom: 0.5rem;">Crie um Email Temporário</h2>
+                                <p style="color: var(--text-secondary); margin-bottom: 1.5rem; max-width: 500px; margin-left: auto; margin-right: auto;">
+                                    Gere um endereço de email descartável em segundos. Perfeito para testes, registros e proteção de privacidade.
+                                </p>
+                                <button class="btn-primary" onclick="generateEmail()" id="generateBtn" style="font-size: 1rem; padding: 0.8rem 2rem;">
+                                    <i class="fas fa-zap"></i> Gerar Email Agora
                                 </button>
-                                <p style="font-size:0.78rem; color:var(--text-tertiary); margin-top:0.85rem; text-align:center;">
-                                    <i class="fa-solid fa-lock" aria-hidden="true"></i> Armazenamento temporário criptografado · Sessão persistente
+                            </div>
+                        </div>
+
+                        <div id="emailDisplay" style="display: none;">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div>
+                                        <div class="card-title">Seu Email Temporário</div>
+                                        <div class="card-subtitle">Válido por 1 hora</div>
+                                    </div>
+                                </div>
+                                <div class="email-display" id="emailValue">—</div>
+                                <div class="button-group" style="margin-top: 1rem;">
+                                    <button class="btn-secondary btn-sm" onclick="copyEmail()">
+                                        <i class="fas fa-copy"></i> Copiar
+                                    </button>
+                                    <button class="btn-primary btn-sm" onclick="updateEmail()" id="updateEmailBtn">
+                                        <i class="fas fa-sync"></i> Atualizar
+                                    </button>
+                                    <button class="btn-danger btn-sm" onclick="deleteEmail()">
+                                        <i class="fas fa-trash"></i> Deletar
+                                    </button>
+                                </div>
+                                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 1rem;">
+                                    Este email expirará em 1 hora. Copie e use em qualquer lugar que necessite.
                                 </p>
                             </div>
 
-                            <!-- Estado: email ativo -->
-                            <div id="emailDisplay" style="display:none;">
-                                <div class="email-display">
-                                    <label>Caixa de Entrada Ativa</label>
-                                    <div class="input-group">
-                                        <input type="text" id="emailAddress" readonly aria-label="Endereço de email gerado">
-                                        <button class="copy-btn" onclick="copyEmail()" title="Copiar email" aria-label="Copiar endereço de email">
-                                            <i class="fa-regular fa-copy" aria-hidden="true"></i>
-                                        </button>
+                            <div class="card">
+                                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                                    <div>
+                                        <div class="card-title"><i class="fas fa-sync"></i> Auto-atualizar Mensagens</div>
+                                        <div class="card-subtitle" id="refreshStatus">Desativado</div>
                                     </div>
-                                    <div class="email-meta">
-                                        <div class="email-status">
-                                            <div class="status-dot" style="color:var(--success)"></div>
-                                            <span>Canal ativo · sincronizado em tempo real</span>
-                                        </div>
-                                        <div class="refresh-indicator" id="autoRefreshIndicator" style="display:none;">
-                                            <div class="refresh-ring"></div>
-                                            <span>Auto-sync</span>
-                                        </div>
-                                    </div>
+                                    <button class="btn-secondary" id="autoRefreshBtn" onclick="toggleAutoRefresh()">Ativar</button>
                                 </div>
-                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
-                                    <button class="btn-secondary" onclick="generateEmail()">
-                                        <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i> Rotacionar
-                                    </button>
-                                    <button class="btn-secondary" onclick="clearSession()">
-                                        <i class="fa-solid fa-trash" aria-hidden="true"></i> Encerrar
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <div>
+                                        <div class="card-title">Mensagens (<span id="messageCount">0</span>)</div>
+                                    </div>
+                                    <button class="btn-secondary btn-sm" id="syncBtn" onclick="fetchMessages()">
+                                        <i class="fas fa-sync"></i> Sincronizar
                                     </button>
                                 </div>
+                                <div id="messagesList">
+                                    <div class="empty-state">
+                                        <div class="empty-icon"><i class="fas fa-inbox"></i></div>
+                                        <p>Nenhuma mensagem ainda</p>
+                                        <p style="font-size: 0.85rem;">Use seu email para se registrar em sites e aguarde as mensagens chegarem.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="messageDetail" style="display: none;" class="card">
+                                <button class="btn-secondary btn-sm" onclick="closeMessage()" style="float: right;">✕</button>
+                                <div id="messageDetailContent"></div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Inbox -->
-                    <div class="card" id="inboxCard" style="display:none;">
-                        <div class="card-header">
-                            <h2>
-                                <i class="fa-solid fa-inbox" aria-hidden="true"></i> Inbox Monitor
-                                <span class="unread-badge" id="unreadBadge" style="display:none;">0</span>
-                            </h2>
-                            <div style="display:flex; gap:0.5rem; align-items:center;">
-                                <div class="refresh-indicator" id="loadingIndicator" style="display:none;">
-                                    <div class="spinner"></div>
-                                </div>
-                                <button class="btn-secondary btn-sm" onclick="refreshInbox()" id="refreshBtn" aria-label="Sincronizar inbox">
-                                    <i class="fa-solid fa-rotate" aria-hidden="true"></i> Sincronizar
+                    <!-- WhatsApp Tab -->
+                    <div id="whatsapp" class="tab-content">
+                        <div id="whatsappForm" class="card">
+                            <div style="text-align: center; padding: 2rem 0;">
+                                <div class="empty-icon"><i class="fas fa-comments"></i></div>
+                                <h2 style="margin-bottom: 0.5rem;">Conecte seu WhatsApp Bot</h2>
+                                <p style="color: var(--text-secondary); margin-bottom: 1.5rem; max-width: 500px; margin-left: auto; margin-right: auto;">
+                                    Gere um código de emparelhamento para conectar seu bot WhatsApp e automatize respostas em grupos.
+                                </p>
+                                <button class="btn-primary" onclick="generateWhatsappToken()" id="generateWhatsappBtn" style="font-size: 1rem; padding: 0.8rem 2rem;">
+                                    <i class="fas fa-zap"></i> Gerar Token de Conexão
                                 </button>
                             </div>
                         </div>
-                        <div class="card-content">
-                            <div class="inbox-toolbar">
-                                <input type="search" id="searchInput" placeholder="Buscar por remetente ou assunto..." oninput="filterMessages()" aria-label="Buscar mensagens">
-                                <button class="btn-secondary btn-sm" onclick="markAllRead()" title="Marcar todos como lidos" aria-label="Marcar todos como lidos">
-                                    <i class="fa-solid fa-check-double"></i>
-                                </button>
-                            </div>
-                            <div id="messagesList" class="messages-list" aria-live="polite" aria-label="Lista de mensagens"></div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- ── WhatsApp Tab ── -->
-                <div id="whatsappTab" class="tab-content" role="tabpanel">
-                    <div class="card">
-                        <div class="card-header">
-                            <h2><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Conectar Dispositivo</h2>
-                        </div>
-                        <div class="card-content">
-                            <div id="whatsappForm">
-                                <div class="form-group">
-                                    <label for="phoneNumber">Número do Terminal</label>
-                                    <input type="tel" id="phoneNumber" placeholder="+55 (11) 99999-9999" maxlength="20" aria-label="Número de telefone">
+                        <div id="whatsappDisplay" style="display: none;">
+                            <div class="card">
+                                <div class="card-title" style="margin-bottom: 1.5rem;">
+                                    <i class="fas fa-qrcode"></i> Conectar WhatsApp Bot
                                 </div>
-                                <button class="btn-success" onclick="generateCode()" style="width:100%; padding:1rem; font-size:1rem; border-radius:14px;">
-                                    <i class="fa-solid fa-key" aria-hidden="true"></i> Gerar Token de Vinculação
-                                </button>
-                            </div>
 
-                            <div id="codeDisplay" style="display:none;">
-                                <div class="qr-display">
-                                    <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:0.5rem;">Escaneie o QR Code ou use o código de pareamento</p>
-                                    <div class="qr-code-container" id="qrContainer" aria-label="QR Code de pareamento"></div>
-                                    <div class="token-display">
-                                        <div class="token-label">Código de Pareamento Direto</div>
-                                        <div class="token-value" id="tokenValue" aria-live="polite">--------</div>
-                                        <button class="btn-primary" onclick="copyToken()" style="width:100%; margin-bottom:0.5rem;">
-                                            <i class="fa-regular fa-copy" aria-hidden="true"></i> Copiar Código
-                                        </button>
+                                <div class="qr-container">
+                                    <div>
+                                        <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">
+                                            <strong>Seu Token de Emparelhamento:</strong>
+                                        </p>
+                                        <div class="token-display" id="tokenDisplay">—</div>
                                     </div>
-                                    <div style="background:#0d0d11; border:1px solid var(--border-color); border-radius:13px; padding:1.1rem; text-align:left;">
-                                        <strong style="color:white; display:block; margin-bottom:0.5rem; font-size:0.875rem;">
-                                            <i class="fa-solid fa-circle-info" style="color:var(--info)"></i> Instruções de Sincronismo:
-                                        </strong>
-                                        <ol style="margin-left:1.25rem; font-size:0.83rem; line-height:1.65; color:var(--text-secondary);">
-                                            <li>Acesse <strong style="color:white;">Aparelhos Conectados</strong> no WhatsApp.</li>
-                                            <li>Selecione <strong style="color:white;">Conectar com número de telefone</strong>.</li>
-                                            <li>Insira o código alfanumérico exibido acima.</li>
-                                        </ol>
+
+                                    <div>
+                                        <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">
+                                            <strong>Escaneie o QR Code:</strong>
+                                        </p>
+                                        <div class="qr-code" id="qrCode"></div>
                                     </div>
-                                    <button class="btn-secondary" onclick="resetWhatsapp()" style="width:100%; margin-top:1rem;">
-                                        <i class="fa-solid fa-rotate-left"></i> Reiniciar Pareamento
+                                </div>
+
+                                <div style="margin-top: 2rem;">
+                                    <p style="font-weight: 600; margin-bottom: 1rem;">Passo a Passo de Conexão:</p>
+                                    <ol class="steps">
+                                        <li>Abra o WhatsApp no seu celular</li>
+                                        <li>Vá para Configurações → Vinculado a Dispositivos</li>
+                                        <li>Clique em "Vincular um Dispositivo"</li>
+                                        <li>Escaneie o QR Code acima com a câmera do celular</li>
+                                        <li>Ou digite manualmente o token: <strong id="tokenManual">—</strong></li>
+                                        <li>Seu bot será conectado automaticamente</li>
+                                    </ol>
+                                </div>
+
+                                <div class="button-group" style="margin-top: 2rem;">
+                                    <button class="btn-secondary" onclick="copyToken()">
+                                        <i class="fas fa-copy"></i> Copiar Token
+                                    </button>
+                                    <button class="btn-secondary" onclick="downloadQR()">
+                                        <i class="fas fa-download"></i> Baixar QR Code
+                                    </button>
+                                    <button class="btn-danger" onclick="resetWhatsapp()">
+                                        <i class="fas fa-redo"></i> Gerar Novo Token
                                     </button>
                                 </div>
                             </div>
 
-                            <div id="successState" style="display:none;">
-                                <div style="background:#020203; border:1px solid rgba(16,185,129,0.2); border-radius:18px; padding:1.75rem; text-align:center;">
-                                    <div style="width:48px; height:48px; background:var(--success); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1rem; color:white; font-size:1.2rem;">
-                                        <i class="fa-solid fa-check" aria-hidden="true"></i>
+                            <div id="whatsappConnected" style="display: none;" class="card">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--success) 0%, #059669 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
+                                        <i class="fas fa-check"></i>
                                     </div>
-                                    <h3 style="margin-bottom:0.5rem;">Terminal Conectado</h3>
-                                    <p style="color:var(--text-secondary); font-size:0.875rem; margin-bottom:1rem;" id="activatedPhone"></p>
-                                    <div class="log-terminal" id="terminalContainer" aria-live="polite" aria-label="Log do terminal"></div>
-                                    <button class="btn-danger btn-sm" onclick="resetWhatsapp()" style="margin-top:1rem;">
-                                        <i class="fa-solid fa-plug-circle-xmark"></i> Desconectar
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ── Commands Tab ── -->
-                <div id="commandsTab" class="tab-content" role="tabpanel">
-                    <div class="card">
-                        <div class="card-header">
-                            <h2><i class="fa-solid fa-list" aria-hidden="true"></i> Comandos Disponíveis</h2>
-                        </div>
-                        <div class="card-content">
-                            <div id="commandsList" style="display:grid; gap:1.1rem;"></div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h2><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Módulos de Segurança</h2>
-                        </div>
-                        <div class="card-content">
-                            <div style="display:grid; gap:0.85rem;">
-                                <div class="security-module" style="border:1px solid rgba(239,68,68,0.15);">
-                                    <div class="security-module-icon" style="background:rgba(239,68,68,0.08); color:#f87171;">
-                                        <i class="fa-solid fa-link-slash"></i>
-                                    </div>
-                                    <div class="security-module-body">
-                                        <h4 style="color:#f87171;">Anti-Link Actuator</h4>
-                                        <p>Interceptação imediata e banimento de links não autorizados nas salas monitoradas.</p>
-                                    </div>
-                                </div>
-                                <div class="security-module" style="border:1px solid rgba(168,85,247,0.15);">
-                                    <div class="security-module-icon" style="background:rgba(168,85,247,0.08); color:var(--primary-light);">
-                                        <i class="fa-solid fa-cookie-bite"></i>
-                                    </div>
-                                    <div class="security-module-body">
-                                        <h4 style="color:var(--primary-light);">Sessões Persistentes</h4>
-                                        <p>Arquitetura em cookies criptografados evita quedas por recarregamento de página.</p>
-                                    </div>
-                                </div>
-                                <div class="security-module" style="border:1px solid rgba(16,185,129,0.15);">
-                                    <div class="security-module-icon" style="background:rgba(16,185,129,0.08); color:var(--success);">
-                                        <i class="fa-solid fa-robot"></i>
-                                    </div>
-                                    <div class="security-module-body">
-                                        <h4 style="color:var(--success);">Daemon 24/7</h4>
-                                        <p>O bot continua processando dados mesmo quando a interface do cliente está offline.</p>
+                                    <div>
+                                        <h3 style="color: var(--success);">WhatsApp Bot Conectado!</h3>
+                                        <p style="color: var(--text-secondary); font-size: 0.9rem;">Seu bot está pronto para automatizar mensagens em grupos.</p>
                                     </div>
                                 </div>
                             </div>
@@ -1577,960 +1258,760 @@
                     </div>
                 </div>
 
-                <!-- ── Settings Tab ── -->
-                <div id="settingsTab" class="tab-content" role="tabpanel">
-                    <div class="card">
-                        <div class="card-header">
-                            <h2><i class="fa-solid fa-sliders" aria-hidden="true"></i> Parâmetros da Aplicação</h2>
-                        </div>
-                        <div class="card-content">
-                            <div class="settings-grid">
-                                <div class="setting-card">
-                                    <div class="setting-label"><i class="fa-solid fa-bell"></i> Notificações</div>
-                                    <button class="btn-secondary btn-sm" onclick="toggleNotifications()" id="notifBtn" style="width:100%;" aria-pressed="true">Ativo</button>
-                                </div>
-                                <div class="setting-card">
-                                    <div class="setting-label"><i class="fa-solid fa-rotate"></i> Auto-Refresh</div>
-                                    <select id="pollingSelect" style="width:100%;" onchange="updatePolling()" aria-label="Intervalo de atualização automática">
-                                        <option value="5000">5 segundos</option>
-                                        <option value="10000" selected>10 segundos</option>
-                                        <option value="30000">30 segundos</option>
-                                        <option value="0">Desativar</option>
-                                    </select>
-                                </div>
-                                <div class="setting-card">
-                                    <div class="setting-label"><i class="fa-solid fa-volume-high"></i> Alertas Sonoros</div>
-                                    <button class="btn-secondary btn-sm" onclick="toggleSound()" id="soundBtn" style="width:100%;" aria-pressed="true">Ativo</button>
-                                </div>
-                                <div class="setting-card">
-                                    <div class="setting-label"><i class="fa-solid fa-eye"></i> Visualização HTML</div>
-                                    <button class="btn-secondary btn-sm" onclick="toggleHtmlView()" id="htmlViewBtn" style="width:100%;" aria-pressed="false">Inativo</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h2><i class="fa-solid fa-database" aria-hidden="true"></i> Banco de Dados Local</h2>
-                        </div>
-                        <div class="card-content">
-                            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:0.85rem;">
-                                <button class="btn-secondary" onclick="exportData()"><i class="fa-solid fa-download"></i> Exportar</button>
-                                <button class="btn-secondary" onclick="importData()"><i class="fa-solid fa-upload"></i> Importar</button>
-                                <button class="btn-danger" onclick="clearAllData()"><i class="fa-solid fa-trash"></i> Purgar Tudo</button>
-                            </div>
-                            <input type="file" id="importFileInput" accept=".json" style="display:none;" onchange="handleImport(event)">
-                            <p style="font-size:0.75rem; color:var(--text-tertiary); margin-top:1rem;">
-                                <i class="fa-solid fa-circle-info"></i> Os dados são armazenados localmente em cookies criptografados. Exporte regularmente para backup.
-                            </p>
-                        </div>
-                    </div>
+                <div class="footer">
+                    <p>MailBot Premium © 2024 | Desenvolvido por APELA WAR</p>
+                    <p style="margin-top: 0.5rem; font-size: 0.75rem;">Email Temporário & Bot WhatsApp Automation</p>
                 </div>
-
-            </section>
+            </div>
         </div>
     </main>
 
-    <!-- ═══════════════════ MODAL: Visualizar Email ═══════════════════ -->
-    <div class="modal" id="messageModal" role="dialog" aria-modal="true" aria-labelledby="modalSubject">
+    <div class="modal" id="creatorModal">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-header-info">
-                    <h3 id="modalSubject">Assunto</h3>
-                    <p id="modalFrom">Remetente</p>
-                </div>
-                <button class="modal-close" onclick="closeModal()" aria-label="Fechar">
-                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-                </button>
+                <h2 class="modal-title">Sobre o Criador</h2>
+                <button class="modal-close" onclick="closeCreatorModal()">✕</button>
             </div>
-            <div class="modal-body">
-                <div class="email-meta-row">
-                    <div class="email-meta-item">
-                        <label>De</label>
-                        <p id="modalFromFull">—</p>
-                    </div>
-                    <div class="email-meta-item">
-                        <label>Recebido em</label>
-                        <p id="modalDate">—</p>
-                    </div>
-                    <div class="email-meta-item">
-                        <label>Para</label>
-                        <p id="modalTo">—</p>
-                    </div>
-                    <div class="email-meta-item">
-                        <label>ID da Mensagem</label>
-                        <p id="modalId" style="font-family:'JetBrains Mono',monospace; font-size:0.72rem;">—</p>
-                    </div>
+            <div style="text-align: center;">
+                <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--primary) 0%, #06b6d4 100%); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; margin: 0 auto 1.5rem;">
+                    <i class="fas fa-rocket"></i>
                 </div>
-                <label style="margin-bottom:0.5rem; display:block;">Conteúdo</label>
-                <div class="email-content" id="modalContent"></div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary btn-sm" onclick="copyModalContent()">
-                    <i class="fa-regular fa-copy"></i> Copiar Conteúdo
-                </button>
-                <button class="btn-secondary btn-sm" onclick="closeModal()">
-                    <i class="fa-solid fa-xmark"></i> Fechar
-                </button>
+                <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem;">APELA WAR</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                    Desenvolvedor de soluções inovadoras em automação e ferramentas de produtividade. Criador do MailBot Premium.
+                </p>
+                <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; text-align: left;">
+                    <p style="margin-bottom: 1rem;"><strong>Sobre o Projeto:</strong></p>
+                    <p style="color: var(--text-secondary); line-height: 1.6;">
+                        MailBot Premium é uma plataforma completa para gerenciar emails temporários e automatizar bots WhatsApp. 
+                        Desenvolvido com foco em segurança, privacidade e facilidade de uso. Ideal para desenvolvedores, testadores 
+                        e profissionais que precisam de soluções rápidas e confiáveis.
+                    </p>
+                </div>
+                <div class="button-group" style="justify-content: center;">
+                    <a href="https://discord.gg/yKjpB2CWT4" target="_blank" class="btn-primary">
+                        <i class="fab fa-discord"></i> Discord
+                    </a>
+                    <a href="https://youtube.com/@apelawar_yt" target="_blank" class="btn-primary">
+                        <i class="fab fa-youtube"></i> YouTube
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- ═══════════════════ iOS PWA Banner ═══════════════════ -->
-    <div class="ios-pwa-banner" id="iosPwaBanner" role="banner" aria-label="Instalar aplicativo">
-        <div class="ios-pwa-inner">
-            <div style="color:var(--primary-light); font-size:1.4rem; flex-shrink:0;">
-                <i class="fa-solid fa-share-from-square"></i>
-            </div>
-            <div style="flex:1;">
-                <p style="color:#fff; font-weight:700; font-size:0.875rem;">Adicionar MailBot ao Workspace</p>
-                <p style="color:var(--text-secondary); font-size:0.78rem;">Toque em compartilhar e "Adicionar à Tela de Início" para modo nativo.</p>
-            </div>
-            <button class="btn-close" onclick="closeIosBanner()" aria-label="Fechar banner">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-    </div>
-
-    <!-- ═══════════════════ JAVASCRIPT ═══════════════════ -->
     <script>
-    'use strict';
+        const state = {
+            currentEmail: null,
+            accountId: null,
+            token: null,
+            messages: [],
+            autoRefresh: false,
+            autoRefreshInterval: null,
+            whatsappToken: null,
+            whatsappConnected: false,
+            theme: 'dark',
+            startTime: Date.now(),
+            totalEmails: 0,
+            totalMessages: 0,
+            activityLog: []
+        };
 
-    // ── Configurações da API mail.tm ──
-    const API_BASE_URL = "https://api.mail.tm";
-    const API_RETRY_ATTEMPTS = 3;
-    const API_RETRY_DELAY = 1000;
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSession();
+            loadTheme();
+            updateStatusBadge();
+            updateStats();
+            setInterval(updateStats, 1000);
+        });
 
-    // ── Utilitários de segurança ──
-    function sanitizeHTML(str) {
-        if (str === null || str === undefined) return '';
-        const div = document.createElement('div');
-        div.textContent = String(str);
-        return div.innerHTML;
-    }
+        function setTheme(theme) {
+            state.theme = theme;
+            localStorage.setItem('mailbot_theme', theme);
+            
+            if (theme === 'light') {
+                document.body.classList.add('light-theme');
+            } else {
+                document.body.classList.remove('light-theme');
+            }
 
-    function sanitizeInput(input) {
-        return String(input).replace(/[<>"'`]/g, '').trim();
-    }
+            document.getElementById('darkThemeBtn').classList.toggle('active', theme === 'dark');
+            document.getElementById('lightThemeBtn').classList.toggle('active', theme === 'light');
+            showToast(`Tema ${theme === 'dark' ? 'escuro' : 'claro'} ativado`, 'success');
+        }
 
-    // ── CookieManager ──
-    const CookieManager = {
-        set(name, value, days = 365) {
-            const date = new Date();
-            date.setTime(date.getTime() + days * 864e5);
-            const encoded = encodeURIComponent(JSON.stringify(value));
-            document.cookie = `${name}=${encoded};expires=${date.toUTCString()};path=/;SameSite=Strict`;
-        },
-        get(name) {
-            const nameEQ = name + '=';
-            for (let c of document.cookie.split(';')) {
-                c = c.trim();
-                if (c.startsWith(nameEQ)) {
-                    try { return JSON.parse(decodeURIComponent(c.slice(nameEQ.length))); }
-                    catch { return null; }
+        function loadTheme() {
+            const saved = localStorage.getItem('mailbot_theme') || 'dark';
+            setTheme(saved);
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const hamburger = document.getElementById('hamburgerBtn');
+            
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('hamburgerBtn').classList.remove('active');
+        }
+
+        function saveSession() {
+            localStorage.setItem('mailbot_session', JSON.stringify({
+                email: state.currentEmail,
+                accountId: state.accountId,
+                token: state.token,
+                messages: state.messages,
+                totalEmails: state.totalEmails,
+                totalMessages: state.totalMessages,
+                activityLog: state.activityLog
+            }));
+        }
+
+        function loadSession() {
+            const saved = localStorage.getItem('mailbot_session');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    state.currentEmail = data.email;
+                    state.accountId = data.accountId;
+                    state.token = data.token;
+                    state.messages = data.messages || [];
+                    state.totalEmails = data.totalEmails || 0;
+                    state.totalMessages = data.totalMessages || 0;
+                    state.activityLog = data.activityLog || [];
+                    
+                    if (state.currentEmail) {
+                        showEmailDisplay();
+                        renderMessages();
+                    }
+                } catch (e) {
+                    console.error('Erro ao carregar sessão:', e);
                 }
             }
-            return null;
-        },
-        remove(name) {
-            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`;
         }
-    };
 
-    // ── Wrapper de API com retry ──
-    async function apiCall(endpoint, options = {}) {
-        let lastError;
-        for (let attempt = 0; attempt < API_RETRY_ATTEMPTS; attempt++) {
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            const tab = document.getElementById(tabName);
+            if (tab) {
+                tab.classList.add('active');
+            }
+            
+            const buttons = document.querySelectorAll('.tab-btn');
+            for (let btn of buttons) {
+                if (btn.textContent.toLowerCase().includes(tabName.toLowerCase())) {
+                    btn.classList.add('active');
+                    break;
+                }
+            }
+        }
+
+        async function generateEmail() {
+            const btn = document.getElementById('generateBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
+
             try {
-                const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-                    ...options,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...options.headers
-                    }
+                const domainsRes = await fetch('https://api.mail.tm/domains');
+                if (!domainsRes.ok) throw new Error('Erro ao obter domínios');
+                
+                const domainsData = await domainsRes.json();
+                const domains = domainsData['hydra:member'] || [];
+                
+                if (domains.length === 0) throw new Error('Nenhum domínio disponível');
+
+                const domain = domains[0].domain;
+                const randomString = Math.random().toString(36).substring(2, 10);
+                const newEmail = `${randomString}@${domain}`;
+                const password = Math.random().toString(36).substring(2, 15);
+
+                const accountRes = await fetch('https://api.mail.tm/accounts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        address: newEmail,
+                        password: password,
+                    }),
                 });
 
-                if (!response.ok) {
-                    if (response.status === 429) {
-                        await new Promise(r => setTimeout(r, API_RETRY_DELAY * (attempt + 1)));
-                        continue;
-                    }
-                    throw new Error(`HTTP ${response.status}`);
+                if (!accountRes.ok) {
+                    const errorData = await accountRes.json();
+                    throw new Error(errorData.detail || 'Erro ao criar conta');
                 }
 
-                return await response.json();
+                const accountData = await accountRes.json();
+
+                const tokenRes = await fetch('https://api.mail.tm/token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        address: newEmail,
+                        password: password,
+                    }),
+                });
+
+                if (!tokenRes.ok) throw new Error('Erro ao obter token');
+
+                const tokenData = await tokenRes.json();
+
+                state.currentEmail = newEmail;
+                state.accountId = accountData.id;
+                state.token = tokenData.token;
+                state.messages = [];
+                state.totalEmails++;
+                
+                addActivity(`Email criado: ${newEmail}`);
+                saveSession();
+
+                showEmailDisplay();
+                updateStatusBadge();
+                showToast('Email temporário criado com sucesso!', 'success');
             } catch (error) {
-                lastError = error;
-                if (attempt < API_RETRY_ATTEMPTS - 1) {
-                    await new Promise(r => setTimeout(r, API_RETRY_DELAY));
-                }
+                console.error('Erro:', error);
+                showToast(error.message || 'Erro ao gerar email', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-zap"></i> Gerar Email Agora';
             }
         }
-        throw lastError || new Error('API request failed');
-    }
 
-    // ── Estado da aplicação ──
-    let state = {
-        currentEmail:        CookieManager.get('mailbot_email')         || null,
-        currentAccountId:    CookieManager.get('mailbot_account_id')    || null,
-        currentToken:        CookieManager.get('mailbot_token')         || null,
-        messages:            CookieManager.get('mailbot_messages')      || [],
-        unreadIds:           CookieManager.get('mailbot_unread')        || [],
-        whatsappToken:       null,
-        whatsappPhone:       null,
-        isServerConnected:   CookieManager.get('mailbot_connected')     || false,
-        startTime:           CookieManager.get('mailbot_starttime')     || Date.now(),
-        notificationsEnabled: CookieManager.get('mailbot_notifications') !== false,
-        soundEnabled:        CookieManager.get('mailbot_sound')         !== false,
-        htmlViewEnabled:     CookieManager.get('mailbot_htmlview')      || false,
-        pollingInterval:     CookieManager.get('mailbot_polling')       || 10000,
-    };
-
-    let pollingTimer = null;
-    const EMAIL_TTL = 60 * 60 * 1000; // 1 hora
-
-    // ── Comandos do bot ──
-    const commands = [
-        { name: '.mail',         icon: '<i class="fa-solid fa-envelope"></i>',       description: 'Instancia e exibe um novo endereço temporário corporativo.',           example: '.mail',         result: 'Email gerado: mb_x8a2j@mail.tm' },
-        { name: '.inbox',        icon: '<i class="fa-solid fa-inbox"></i>',           description: 'Força o barramento a listar mensagens pendentes na caixa.',            example: '.inbox',        result: 'Retornando log de mensagens recebidas.' },
-        { name: '.newmail',      icon: '<i class="fa-solid fa-rotate"></i>',          description: 'Deleta o pool anterior gerando rotação limpa de inbox.',               example: '.newmail',      result: 'Pool anterior descartado. Nova rota ativa.' },
-        { name: '.bloquearlink', icon: '<i class="fa-solid fa-link-slash"></i>',      description: 'Ativa o módulo de contenção e filtro de URLs nos grupos.',             example: '.bloquearlink', result: 'Módulo Anti-Link operacional e ativo.' },
-        { name: '.liberarlink',  icon: '<i class="fa-solid fa-link"></i>',            description: 'Abre exceção temporária para compartilhamento de hiperlinks.',         example: '.liberarlink',  result: 'Contenção desativada.' },
-        { name: '.status',       icon: '<i class="fa-solid fa-circle-check"></i>',    description: 'Requisita o relatório operacional do servidor principal.',             example: '.status',       result: 'Daemon Online ✓ | Uptime: 98h' },
-        { name: '.ping',         icon: '<i class="fa-solid fa-satellite-dish"></i>',  description: 'Verifica a latência e conectividade com o servidor de relay.',         example: '.ping',         result: 'Pong! Latência: 12ms' },
-        { name: '.limpar',       icon: '<i class="fa-solid fa-broom"></i>',           description: 'Limpa o histórico de mensagens da instância ativa.',                   example: '.limpar',       result: 'Histórico limpo com sucesso.' },
-    ];
-
-    // ── Inicialização ──
-    document.addEventListener('DOMContentLoaded', () => {
-        restoreSession();
-        renderCommands();
-        updateStatusBadge();
-        updateStats();
-        detectIOSPWA();
-        initPolling();
-        updateSettingsUI();
-
-        // Uptime counter
-        setInterval(updateStats, 1000);
-        setInterval(updateStatusBadge, 5000);
-
-        // Fechar modal com ESC
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape') closeModal();
-        });
-
-        // Fechar modal clicando fora
-        document.getElementById('messageModal').addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
-        });
-
-        // Prevenir zoom em multi-touch
-        document.addEventListener('touchmove', e => {
-            if (e.touches.length > 1) e.preventDefault();
-        }, { passive: false });
-    });
-
-    // ── Restaurar sessão ──
-    function restoreSession() {
-        if (state.currentEmail && state.currentToken) {
-            showEmailDisplay();
-            renderMessages();
-        }
-    }
-
-    // ── Salvar sessão ──
-    function saveSession() {
-        CookieManager.set('mailbot_email',         state.currentEmail);
-        CookieManager.set('mailbot_account_id',    state.currentAccountId);
-        CookieManager.set('mailbot_token',         state.currentToken);
-        CookieManager.set('mailbot_messages',      state.messages);
-        CookieManager.set('mailbot_unread',        state.unreadIds);
-        CookieManager.set('mailbot_connected',     state.isServerConnected);
-        CookieManager.set('mailbot_notifications', state.notificationsEnabled);
-        CookieManager.set('mailbot_sound',         state.soundEnabled);
-        CookieManager.set('mailbot_htmlview',      state.htmlViewEnabled);
-        CookieManager.set('mailbot_polling',       state.pollingInterval);
-    }
-
-    // ── Navegar para home ──
-    function goToHome() {
-        document.getElementById('heroSection').style.display = '';
-        document.getElementById('featuresSection').style.display = '';
-        document.getElementById('dashboard').classList.remove('active');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // ── Navegar para dashboard ──
-    function goToDashboard() {
-        document.getElementById('heroSection').style.display = 'none';
-        document.getElementById('featuresSection').style.display = 'none';
-        document.getElementById('dashboard').classList.add('active');
-        document.getElementById('mainScroll').scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function scrollToFeatures() {
-        document.getElementById('featuresSection').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    // ── Trocar aba ──
-    function switchTab(tabId, btn) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(el => {
-            el.classList.remove('active');
-            el.setAttribute('aria-selected', 'false');
-        });
-        document.getElementById(tabId + 'Tab').classList.add('active');
-        if (btn) {
-            btn.classList.add('active');
-            btn.setAttribute('aria-selected', 'true');
-        }
-    }
-
-    // ── Mostrar display de email ──
-    function showEmailDisplay() {
-        document.getElementById('emailForm').style.display = 'none';
-        document.getElementById('emailDisplay').style.display = 'block';
-        document.getElementById('inboxCard').style.display = 'block';
-        document.getElementById('emailAddress').value = state.currentEmail || '';
-    }
-
-    // ── Gerar email (API mail.tm) ──
-    async function generateEmail() {
-        const btn = document.getElementById('generateEmailBtn');
-        if (btn) btn.disabled = true;
-        showToast('Conectando à rede de emails...', 'info');
-
-        try {
-            // Gerar domínio aleatório
-            const domainsRes = await apiCall('/domains');
-            if (!domainsRes.hydra_member || domainsRes.hydra_member.length === 0) {
-                throw new Error('Nenhum domínio disponível');
-            }
-            const domain = domainsRes.hydra_member[0];
-
-            // Gerar email aleatório
-            const randomEmail = `mailbot_${Math.random().toString(36).substring(2, 15)}@${domain.domain}`;
-            const password = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
-            // Criar conta
-            const accountRes = await apiCall('/accounts', {
-                method: 'POST',
-                body: JSON.stringify({
-                    address: randomEmail,
-                    password: password
-                })
-            });
-
-            // Fazer login
-            const loginRes = await apiCall('/token', {
-                method: 'POST',
-                body: JSON.stringify({
-                    address: randomEmail,
-                    password: password
-                })
-            });
-
-            state.currentEmail   = randomEmail;
-            state.currentAccountId = accountRes.id;
-            state.currentToken   = loginRes.token;
-            state.messages       = [];
-            state.unreadIds      = [];
-
-            saveSession();
-            showEmailDisplay();
-            renderMessages();
-            initPolling();
-            updateStatusBadge();
-
-            playSound();
-            showToast('Email gerado com sucesso!', 'success');
-        } catch (error) {
-            console.error('Erro ao gerar email:', error);
-            showToast('Erro ao conectar com o serviço de email: ' + error.message, 'error');
-        } finally {
-            if (btn) btn.disabled = false;
-        }
-    }
-
-    // ── Copiar email ──
-    function copyEmail() {
-        const email = state.currentEmail;
-        if (!email) return;
-        navigator.clipboard.writeText(email).then(() => {
-            showToast('Email copiado para área de transferência', 'success');
-            playSound();
-        }).catch(() => {
-            const el = document.getElementById('emailAddress');
-            el.select();
-            document.execCommand('copy');
-            showToast('Email copiado!', 'success');
-        });
-    }
-
-    // ── Encerrar sessão ──
-    function clearSession() {
-        if (!confirm('Deseja encerrar a sessão ativa e apagar o email atual?')) return;
-
-        stopPolling();
-
-        state.currentEmail   = null;
-        state.currentAccountId = null;
-        state.currentToken   = null;
-        state.messages       = [];
-        state.unreadIds      = [];
-        state.isServerConnected = false;
-
-        saveSession();
-        updateStatusBadge();
-        updateStats();
-
-        document.getElementById('emailForm').style.display = 'block';
-        document.getElementById('emailDisplay').style.display = 'none';
-        document.getElementById('inboxCard').style.display = 'none';
-
-        showToast('Instância de email encerrada', 'info');
-    }
-
-    // ── Polling (auto-refresh) ──
-    function initPolling() {
-        stopPolling();
-        if (state.currentEmail && state.currentToken && state.pollingInterval > 0) {
-            pollingTimer = setInterval(() => {
-                if (state.currentEmail && state.currentToken) {
-                    silentRefreshInbox();
-                }
-            }, state.pollingInterval);
-            document.getElementById('autoRefreshIndicator').style.display = 'flex';
-        } else {
-            document.getElementById('autoRefreshIndicator').style.display = 'none';
-        }
-    }
-
-    function stopPolling() {
-        if (pollingTimer) { clearInterval(pollingTimer); pollingTimer = null; }
-    }
-
-    function updatePolling() {
-        const sel = document.getElementById('pollingSelect');
-        state.pollingInterval = parseInt(sel.value, 10);
-        saveSession();
-        initPolling();
-        const label = sel.options[sel.selectedIndex].text;
-        showToast(`Auto-refresh: ${label}`, 'info');
-    }
-
-    // ── Refresh inbox (manual) ──
-    async function refreshInbox() {
-        const btn = document.getElementById('refreshBtn');
-        const loader = document.getElementById('loadingIndicator');
-        if (btn) btn.disabled = true;
-        if (loader) loader.style.display = 'flex';
-
-        showToast('Escaneando pacotes pendentes...', 'info');
-
-        try {
-            await fetchRealMessages();
-            playSound();
-            showToast('Inbox sincronizado com sucesso', 'success');
-        } catch (error) {
-            showToast('Erro ao sincronizar mensagens: ' + error.message, 'error');
-        } finally {
-            if (btn) btn.disabled = false;
-            if (loader) loader.style.display = 'none';
-        }
-    }
-
-    // ── Refresh silencioso (polling) ──
-    async function silentRefreshInbox() {
-        try {
-            await fetchRealMessages(true);
-        } catch (e) {}
-    }
-
-    // ── Buscar mensagens reais (API mail.tm) ──
-    async function fetchRealMessages(silent = false) {
-        if (!state.currentToken || !state.currentAccountId) return;
-
-        try {
-            const response = await apiCall(`/accounts/${state.currentAccountId}/messages`, {
-                headers: {
-                    'Authorization': `Bearer ${state.currentToken}`
-                }
-            });
-
-            if (!response.hydra_member || response.hydra_member.length === 0) {
+        async function updateEmail() {
+            if (!state.currentEmail) {
+                showToast('Nenhum email criado. Crie um email primeiro.', 'error');
                 return;
             }
 
-            // Mapear mensagens da API para o nosso formato
-            const apiMessages = response.hydra_member.map((m) => ({
-                id: m.id,
-                from: m.from.address,
-                to: m.to[0]?.address || state.currentEmail,
-                subject: m.subject || "Sem Assunto",
-                date: new Date(m.createdAt),
-                content: m.text || "Sem conteúdo.",
-                html: m.html || null,
-                read: m.seen
+            const btn = document.getElementById('updateEmailBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Atualizando...';
+
+            try {
+                // Deleta o email atual
+                state.currentEmail = null;
+                state.accountId = null;
+                state.token = null;
+                state.messages = [];
+                
+                // Gera novo email
+                const domainsRes = await fetch('https://api.mail.tm/domains');
+                if (!domainsRes.ok) throw new Error('Erro ao obter domínios');
+                
+                const domainsData = await domainsRes.json();
+                const domains = domainsData['hydra:member'] || [];
+                
+                if (domains.length === 0) throw new Error('Nenhum domínio disponível');
+
+                const domain = domains[0].domain;
+                const randomString = Math.random().toString(36).substring(2, 10);
+                const newEmail = `${randomString}@${domain}`;
+                const password = Math.random().toString(36).substring(2, 15);
+
+                const accountRes = await fetch('https://api.mail.tm/accounts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        address: newEmail,
+                        password: password,
+                    }),
+                });
+
+                if (!accountRes.ok) {
+                    const errorData = await accountRes.json();
+                    throw new Error(errorData.detail || 'Erro ao criar conta');
+                }
+
+                const accountData = await accountRes.json();
+
+                const tokenRes = await fetch('https://api.mail.tm/token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        address: newEmail,
+                        password: password,
+                    }),
+                });
+
+                if (!tokenRes.ok) throw new Error('Erro ao obter token');
+
+                const tokenData = await tokenRes.json();
+
+                state.currentEmail = newEmail;
+                state.accountId = accountData.id;
+                state.token = tokenData.token;
+                state.messages = [];
+                state.totalEmails++;
+                
+                addActivity(`Email atualizado para: ${newEmail}`);
+                saveSession();
+
+                // Atualiza a exibição
+                document.getElementById('emailValue').textContent = newEmail;
+                document.getElementById('messageCount').textContent = '0';
+                renderMessages();
+                
+                showToast('Email atualizado com sucesso!', 'success');
+            } catch (error) {
+                console.error('Erro:', error);
+                showToast(error.message || 'Erro ao atualizar email', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-sync"></i> Atualizar';
+            }
+        }
+
+        function showEmailDisplay() {
+            document.getElementById('emailForm').style.display = 'none';
+            document.getElementById('emailDisplay').style.display = 'block';
+            document.getElementById('emailValue').textContent = state.currentEmail || '—';
+        }
+
+        function copyEmail() {
+            if (state.currentEmail) {
+                navigator.clipboard.writeText(state.currentEmail).then(() => {
+                    showToast('Email copiado!', 'success');
+                }).catch(() => {
+                    showToast('Erro ao copiar', 'error');
+                });
+            }
+        }
+
+        function copyCurrentEmail() {
+            if (state.currentEmail) {
+                navigator.clipboard.writeText(state.currentEmail).then(() => {
+                    showToast('Email copiado!', 'success');
+                    closeSidebar();
+                }).catch(() => {
+                    showToast('Erro ao copiar', 'error');
+                });
+            } else {
+                showToast('Nenhum email criado', 'error');
+            }
+        }
+
+        function deleteEmail() {
+            if (confirm('Tem certeza que deseja deletar este email?')) {
+                state.currentEmail = null;
+                state.accountId = null;
+                state.token = null;
+                state.messages = [];
+                state.autoRefresh = false;
+                if (state.autoRefreshInterval) clearInterval(state.autoRefreshInterval);
+                
+                addActivity('Email deletado');
+                saveSession();
+                
+                document.getElementById('emailForm').style.display = 'block';
+                document.getElementById('emailDisplay').style.display = 'none';
+                document.getElementById('messageDetail').style.display = 'none';
+                document.getElementById('messageCount').textContent = '0';
+                
+                updateStatusBadge();
+                showToast('Email deletado', 'success');
+            }
+        }
+
+        async function fetchMessages() {
+            if (!state.accountId || !state.token) {
+                showToast('Nenhum email criado. Crie um email primeiro.', 'error');
+                return;
+            }
+
+            const syncBtn = document.getElementById('syncBtn');
+            syncBtn.disabled = true;
+            syncBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sincronizando...';
+
+            try {
+                console.log('Tentando buscar mensagens...');
+                console.log('Account ID:', state.accountId);
+                console.log('Token:', state.token.substring(0, 20) + '...');
+
+                let url = `https://api.mail.tm/accounts/${state.accountId}/messages`;
+                
+                const res = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${state.token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                console.log('Status da resposta:', res.status);
+
+                if (res.status === 404) {
+                    console.log('Endpoint 404, tentando endpoint alternativo...');
+                    url = `https://api.mail.tm/messages?account=${state.accountId}`;
+                    
+                    const altRes = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${state.token}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!altRes.ok) {
+                        throw new Error(`Erro HTTP ${altRes.status}: ${altRes.statusText}`);
+                    }
+
+                    const data = await altRes.json();
+                    processMessages(data);
+                } else if (!res.ok) {
+                    throw new Error(`Erro HTTP ${res.status}: ${res.statusText}`);
+                } else {
+                    const data = await res.json();
+                    processMessages(data);
+                }
+
+            } catch (error) {
+                console.error('Erro completo:', error);
+                showToast(`Erro: ${error.message}`, 'error');
+            } finally {
+                syncBtn.disabled = false;
+                syncBtn.innerHTML = '<i class="fas fa-sync"></i> Sincronizar';
+            }
+        }
+
+        function processMessages(data) {
+            console.log('Dados recebidos:', data);
+
+            const messages = data['hydra:member'] || data || [];
+            
+            state.messages = (Array.isArray(messages) ? messages : []).map(msg => ({
+                id: msg.id,
+                from: msg.from?.address || msg.from || 'Desconhecido',
+                subject: msg.subject || '(Sem assunto)',
+                createdAt: msg.createdAt,
+                text: msg.text || '',
+                html: msg.html || null,
+                seen: msg.seen,
             }));
 
-            const existingIds = state.messages.map(m => m.id);
-            const truly_new = apiMessages.filter(m => !existingIds.includes(m.id));
-
-            if (truly_new.length === 0) return;
-
-            // Inverter para manter a ordem cronológica correta (mais recentes primeiro)
-            state.messages = [...truly_new, ...state.messages];
-            state.unreadIds = [...truly_new.filter(m => !m.read).map(m => m.id), ...state.unreadIds];
-
+            state.totalMessages = state.messages.length;
             saveSession();
             renderMessages();
-            updateStats();
-
-            if (truly_new.length > 0) {
-                playSound();
-                if (state.notificationsEnabled) {
-                    showToast(`${truly_new.length} nova(s) mensagem(ns) recebida(s)`, 'info');
-                    sendBrowserNotification(truly_new[0]);
-                }
+            
+            if (state.messages.length > 0) {
+                showToast(`${state.messages.length} mensagem(ns) encontrada(s)!`, 'success');
+                addActivity(`${state.messages.length} mensagem(ns) sincronizada(s)`);
+            } else {
+                showToast('Nenhuma mensagem nova', 'info');
             }
-        } catch (error) {
-            console.error('Erro ao buscar mensagens:', error);
-            if (!silent) throw error;
-        }
-    }
-
-    // ── Notificação do navegador ──
-    function sendBrowserNotification(msg) {
-        if (!('Notification' in window) || Notification.permission !== 'granted') return;
-        new Notification('MailBot — Nova mensagem', {
-            body: `De: ${msg.from}\n${msg.subject}`,
-            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect fill="%23a855f7" width="64" height="64" rx="12"/><text x="32" y="44" font-size="32" fill="white" text-anchor="middle" font-weight="bold">M</text></svg>'
-        });
-    }
-
-    // ── Renderizar mensagens ──
-    function renderMessages(filter = '') {
-        const container = document.getElementById('messagesList');
-        if (!container) return;
-
-        const msgs = filter
-            ? state.messages.filter(m =>
-                m.from.toLowerCase().includes(filter.toLowerCase()) ||
-                m.subject.toLowerCase().includes(filter.toLowerCase()))
-            : state.messages;
-
-        if (msgs.length === 0) {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-icon"><i class="fa-regular fa-folder-open"></i></div>
-                    <p>${filter ? 'Nenhuma mensagem encontrada para "' + sanitizeHTML(filter) + '"' : 'Aguardando pacotes de dados'}</p>
-                    <small>${filter ? '' : 'Clique em Sincronizar para verificar novas mensagens'}</small>
-                </div>`;
-            return;
         }
 
-        container.innerHTML = msgs.map(msg => {
-            const isUnread = state.unreadIds.includes(msg.id);
-            const preview = msg.content.substring(0, 80).replace(/\n/g, ' ') + (msg.content.length > 80 ? '…' : '');
-            return `
-                <div class="message-item ${isUnread ? 'unread' : ''}" onclick="openMessage('${sanitizeHTML(msg.id)}')" role="button" tabindex="0" aria-label="Abrir mensagem de ${sanitizeHTML(msg.from)}">
-                    <div class="message-header-row">
-                        <div class="message-from">
-                            <i class="fa-solid fa-envelope${isUnread ? '' : '-open'}" style="color:var(--primary-light); font-size:0.8rem;"></i>
-                            ${sanitizeHTML(msg.from)}
-                        </div>
-                        <div class="message-date">${formatDate(new Date(msg.date))}</div>
+        function renderMessages() {
+            const container = document.getElementById('messagesList');
+            document.getElementById('messageCount').textContent = state.messages.length;
+
+            if (state.messages.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon"><i class="fas fa-inbox"></i></div>
+                        <p>Nenhuma mensagem ainda</p>
+                        <p style="font-size: 0.85rem;">Use seu email para se registrar em sites e aguarde as mensagens chegarem.</p>
                     </div>
-                    <div class="message-subject">${sanitizeHTML(msg.subject)}</div>
-                    <div class="message-preview">${sanitizeHTML(preview)}</div>
-                </div>`;
-        }).join('');
-
-        container.querySelectorAll('.message-item').forEach(el => {
-            el.addEventListener('keydown', e => {
-                if (e.key === 'Enter') el.click();
-            });
-        });
-    }
-
-    // ── Filtrar mensagens ──
-    function filterMessages() {
-        const q = document.getElementById('searchInput').value;
-        renderMessages(q);
-    }
-
-    // ── Marcar todos como lidos ──
-    function markAllRead() {
-        state.unreadIds = [];
-        saveSession();
-        renderMessages(document.getElementById('searchInput').value);
-        updateStats();
-        showToast('Todas as mensagens marcadas como lidas', 'success');
-    }
-
-    // ── Abrir mensagem ──
-    function openMessage(id) {
-        const msg = state.messages.find(m => m.id === id);
-        if (!msg) return;
-
-        // Marcar como lido
-        state.unreadIds = state.unreadIds.filter(uid => uid !== id);
-        saveSession();
-        renderMessages(document.getElementById('searchInput').value);
-        updateStats();
-
-        // Preencher modal
-        document.getElementById('modalSubject').textContent = msg.subject;
-        document.getElementById('modalFrom').textContent = `De: ${msg.from}`;
-        document.getElementById('modalFromFull').textContent = msg.from;
-        document.getElementById('modalDate').textContent = formatDate(new Date(msg.date));
-        document.getElementById('modalTo').textContent = msg.to || state.currentEmail || '—';
-        document.getElementById('modalId').textContent = msg.id;
-
-        const contentEl = document.getElementById('modalContent');
-
-        if (state.htmlViewEnabled && msg.html) {
-            contentEl.className = 'email-content html-mode';
-            contentEl.innerHTML = msg.html;
-        } else {
-            contentEl.className = 'email-content';
-            contentEl.textContent = msg.content;
-        }
-
-        document.getElementById('messageModal').classList.add('active');
-        document.getElementById('modalSubject').focus();
-    }
-
-    // ── Fechar modal ──
-    function closeModal() {
-        document.getElementById('messageModal').classList.remove('active');
-    }
-
-    // ── Copiar conteúdo do modal ──
-    function copyModalContent() {
-        const content = document.getElementById('modalContent').textContent;
-        navigator.clipboard.writeText(content).then(() => {
-            showToast('Conteúdo copiado!', 'success');
-        }).catch(() => showToast('Erro ao copiar', 'error'));
-    }
-
-    // ── WhatsApp ──
-    function generateCode() {
-        const phone = sanitizeInput(document.getElementById('phoneNumber').value);
-        if (!phone || phone.length < 8) {
-            showToast('Insira um número de telefone válido', 'error');
-            document.getElementById('phoneNumber').focus();
-            return;
-        }
-
-        showToast('Iniciando pareamento...', 'info');
-
-        setTimeout(() => {
-            state.whatsappToken = generatePairingCode();
-            state.whatsappPhone = phone;
-            state.isServerConnected = true;
-            saveSession();
-
-            document.getElementById('whatsappForm').style.display = 'none';
-            document.getElementById('codeDisplay').style.display = 'block';
-            document.getElementById('tokenValue').textContent = state.whatsappToken;
-            document.getElementById('qrContainer').innerHTML = generateQRSVG(state.whatsappToken);
-
-            updateStatusBadge();
-            playSound();
-            showToast('Token gerado com sucesso!', 'success');
-        }, 1000);
-    }
-
-    function generatePairingCode() {
-        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-        let code = '';
-        for (let i = 0; i < 8; i++) {
-            if (i === 4) code += '-';
-            code += chars[Math.floor(Math.random() * chars.length)];
-        }
-        return code;
-    }
-
-    function generateQRSVG(data) {
-        const seed = data.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
-        const rng = (s) => { let x = Math.sin(s) * 10000; return x - Math.floor(x); };
-
-        let cells = '';
-        const size = 21;
-        const cellSize = 8;
-
-        for (let r = 0; r < size; r++) {
-            for (let c = 0; c < size; c++) {
-                const inFinder =
-                    (r < 7 && c < 7) ||
-                    (r < 7 && c >= size - 7) ||
-                    (r >= size - 7 && c < 7);
-
-                let filled = false;
-                if (inFinder) {
-                    const lr = r % 7, lc = c % 7;
-                    filled = lr === 0 || lr === 6 || lc === 0 || lc === 6 || (lr >= 2 && lr <= 4 && lc >= 2 && lc <= 4);
-                } else {
-                    filled = rng(seed + r * size + c) > 0.5;
-                }
-
-                if (filled) {
-                    cells += `<rect x="${c * cellSize + 4}" y="${r * cellSize + 4}" width="${cellSize - 1}" height="${cellSize - 1}" rx="1"/>`;
-                }
+                `;
+                return;
             }
-        }
 
-        const svgSize = size * cellSize + 8;
-        return `<svg viewBox="0 0 ${svgSize} ${svgSize}" xmlns="http://www.w3.org/2000/svg" width="180" height="180">
-            <rect width="${svgSize}" height="${svgSize}" fill="white"/>
-            <g fill="#000000">${cells}</g>
-        </svg>`;
-    }
-
-    function copyToken() {
-        if (!state.whatsappToken) return;
-        navigator.clipboard.writeText(state.whatsappToken).then(() => {
-            showToast('Código de emparelhamento copiado!', 'success');
-            playSound();
-        }).catch(() => showToast('Erro ao copiar', 'error'));
-    }
-
-    function resetWhatsapp() {
-        state.whatsappToken = null;
-        state.whatsappPhone = null;
-        state.isServerConnected = false;
-        saveSession();
-        updateStatusBadge();
-
-        document.getElementById('whatsappForm').style.display = 'block';
-        document.getElementById('codeDisplay').style.display = 'none';
-        document.getElementById('successState').style.display = 'none';
-        document.getElementById('phoneNumber').value = '';
-
-        showToast('Pareamento reiniciado', 'info');
-    }
-
-    // ── Renderizar comandos ──
-    function renderCommands() {
-        const list = document.getElementById('commandsList');
-        if (!list) return;
-        list.innerHTML = commands.map(cmd => `
-            <div class="command-illustration">
-                <div class="command-header">
-                    <div class="command-icon">${cmd.icon}</div>
-                    <span class="command-name">${sanitizeHTML(cmd.name)}</span>
+            container.innerHTML = state.messages.map(msg => `
+                <div class="message-item" onclick="openMessage('${escapeHtml(msg.id)}')">
+                    <div class="message-from">${escapeHtml(msg.from)}</div>
+                    <div class="message-subject">${escapeHtml(msg.subject)}</div>
+                    <div class="message-preview">${escapeHtml(msg.text.substring(0, 100))}</div>
                 </div>
-                <p class="command-description">${sanitizeHTML(cmd.description)}</p>
-                <div class="command-example">Syntax: ${sanitizeHTML(cmd.example)}</div>
-                <div class="command-result">Output: ${sanitizeHTML(cmd.result)}</div>
-            </div>
-        `).join('');
-    }
-
-    // ── Status badge ──
-    function updateStatusBadge() {
-        const badge = document.getElementById('statusBadge');
-        const text  = document.getElementById('statusText');
-        if (!badge || !text) return;
-
-        const online = !!(state.currentEmail || state.isServerConnected);
-        badge.className = 'status-badge' + (online ? '' : ' offline');
-        text.textContent = online ? 'Online' : 'Offline';
-    }
-
-    // ── Estatísticas ──
-    function updateStats() {
-        const unread = state.unreadIds.length;
-
-        document.getElementById('emailCount').textContent = state.messages.length;
-        document.getElementById('unreadCount').textContent = unread;
-
-        const diff  = Math.floor((Date.now() - state.startTime) / 1000);
-        const hours = Math.floor(diff / 3600);
-        const mins  = Math.floor((diff % 3600) / 60);
-        document.getElementById('uptime').textContent = `${hours}h ${mins}m`;
-
-        const badge = document.getElementById('unreadBadge');
-        if (badge) {
-            badge.textContent = unread;
-            badge.style.display = unread > 0 ? 'inline-flex' : 'none';
-        }
-    }
-
-    // ── Configurações ──
-    function updateSettingsUI() {
-        document.getElementById('notifBtn').textContent = state.notificationsEnabled ? 'Ativo' : 'Inativo';
-        document.getElementById('soundBtn').textContent = state.soundEnabled ? 'Ativo' : 'Inativo';
-        document.getElementById('htmlViewBtn').textContent = state.htmlViewEnabled ? 'Ativo' : 'Inativo';
-
-        const sel = document.getElementById('pollingSelect');
-        if (sel) sel.value = String(state.pollingInterval);
-    }
-
-    function toggleNotifications() {
-        state.notificationsEnabled = !state.notificationsEnabled;
-        saveSession();
-        document.getElementById('notifBtn').textContent = state.notificationsEnabled ? 'Ativo' : 'Inativo';
-
-        if (state.notificationsEnabled && 'Notification' in window && Notification.permission === 'default') {
-            Notification.requestPermission();
+            `).join('');
         }
 
-        showToast(`Notificações ${state.notificationsEnabled ? 'ativadas' : 'desativadas'}`, 'success');
-    }
+        function openMessage(id) {
+            const msg = state.messages.find(m => m.id === id);
+            if (!msg) return;
 
-    function toggleSound() {
-        state.soundEnabled = !state.soundEnabled;
-        saveSession();
-        document.getElementById('soundBtn').textContent = state.soundEnabled ? 'Ativo' : 'Inativo';
-        if (state.soundEnabled) playSound();
-        showToast(`Alertas sonoros ${state.soundEnabled ? 'ativados' : 'desativados'}`, 'success');
-    }
+            const detail = document.getElementById('messageDetail');
+            const content = document.getElementById('messageDetailContent');
+            
+            content.innerHTML = `
+                <h3 style="margin-bottom: 1rem;">${escapeHtml(msg.subject)}</h3>
+                <div style="margin-bottom: 1rem;">
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">De:</div>
+                    <div style="color: var(--primary-light); font-weight: 600;">${escapeHtml(msg.from)}</div>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Data:</div>
+                    <div>${new Date(msg.createdAt).toLocaleString('pt-BR')}</div>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Mensagem:</div>
+                    <div style="background: var(--bg-card); padding: 1rem; border-radius: 8px; max-height: 400px; overflow-y: auto; border: 1px solid var(--border-color);">
+                        ${msg.html ? msg.html : escapeHtml(msg.text).replace(/\n/g, '<br>')}
+                    </div>
+                </div>
+            `;
+            
+            detail.style.display = 'block';
+        }
 
-    function toggleHtmlView() {
-        state.htmlViewEnabled = !state.htmlViewEnabled;
-        saveSession();
-        document.getElementById('htmlViewBtn').textContent = state.htmlViewEnabled ? 'Ativo' : 'Inativo';
-        showToast(`Visualização HTML ${state.htmlViewEnabled ? 'ativada' : 'desativada'}`, 'info');
-    }
+        function closeMessage() {
+            document.getElementById('messageDetail').style.display = 'none';
+        }
 
-    // ── Exportar dados ──
-    function exportData() {
-        const exportState = { ...state, exportedAt: new Date().toISOString(), version: '2.1' };
-        const blob = new Blob([JSON.stringify(exportState, null, 2)], { type: 'application/json' });
-        const url  = URL.createObjectURL(blob);
-        const a    = document.createElement('a');
-        a.href     = url;
-        a.download = `mailbot_backup_${Date.now()}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
-        showToast('Backup exportado com sucesso!', 'success');
-    }
-
-    // ── Importar dados ──
-    function importData() {
-        document.getElementById('importFileInput').click();
-    }
-
-    function handleImport(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const data = JSON.parse(e.target.result);
-                if (!data.version) throw new Error('Formato inválido');
-
-                if (!confirm(`Importar backup de ${data.exportedAt || 'data desconhecida'}?\nIsso substituirá os dados atuais.`)) return;
-
-                state.currentEmail   = data.currentEmail   || null;
-                state.currentAccountId = data.currentAccountId || null;
-                state.currentToken   = data.currentToken   || null;
-                state.messages       = data.messages       || [];
-                state.unreadIds      = data.unreadIds      || [];
-                state.notificationsEnabled = data.notificationsEnabled !== false;
-                state.soundEnabled   = data.soundEnabled   !== false;
-                state.htmlViewEnabled = data.htmlViewEnabled || false;
-                state.pollingInterval = data.pollingInterval || 10000;
-
-                saveSession();
-                restoreSession();
-                updateSettingsUI();
-                updateStatusBadge();
-                updateStats();
-
-                showToast('Dados importados com sucesso!', 'success');
-            } catch (err) {
-                showToast('Erro ao importar: arquivo inválido', 'error');
+        function toggleAutoRefresh() {
+            if (!state.currentEmail) {
+                showToast('Crie um email primeiro', 'error');
+                return;
             }
-        };
-        reader.readAsText(file);
-        event.target.value = '';
-    }
 
-    // ── Purgar dados ──
-    function clearAllData() {
-        if (!confirm('Apagar TODOS os dados permanentemente? Esta ação não pode ser desfeita.')) return;
+            state.autoRefresh = !state.autoRefresh;
+            const btn = document.getElementById('autoRefreshBtn');
+            const status = document.getElementById('refreshStatus');
 
-        stopPolling();
-
-        ['mailbot_email','mailbot_account_id','mailbot_token','mailbot_messages',
-         'mailbot_unread','mailbot_connected','mailbot_cmd_executed','mailbot_starttime',
-         'mailbot_notifications','mailbot_sound','mailbot_htmlview','mailbot_polling'].forEach(k => CookieManager.remove(k));
-
-        location.reload();
-    }
-
-    // ── iOS PWA ──
-    function detectIOSPWA() {
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        const isStandalone = window.navigator.standalone === true;
-        if (isIOS && !isStandalone) {
-            document.getElementById('iosPwaBanner').style.display = 'block';
+            if (state.autoRefresh) {
+                btn.textContent = 'Desativar';
+                status.textContent = 'A cada 5 segundos';
+                state.autoRefreshInterval = setInterval(() => {
+                    fetchMessages();
+                }, 5000);
+                addActivity('Auto-refresh ativado');
+                showToast('Auto-refresh ativado!', 'success');
+            } else {
+                btn.textContent = 'Ativar';
+                status.textContent = 'Desativado';
+                if (state.autoRefreshInterval) clearInterval(state.autoRefreshInterval);
+                addActivity('Auto-refresh desativado');
+                showToast('Auto-refresh desativado', 'info');
+            }
         }
-    }
 
-    function closeIosBanner() {
-        document.getElementById('iosPwaBanner').style.display = 'none';
-    }
+        function generateWhatsappToken() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let token = '';
+            for (let i = 0; i < 8; i++) {
+                if (i === 4) token += '-';
+                token += chars[Math.floor(Math.random() * chars.length)];
+            }
+            
+            state.whatsappToken = token;
+            document.getElementById('whatsappForm').style.display = 'none';
+            document.getElementById('whatsappDisplay').style.display = 'block';
+            document.getElementById('tokenDisplay').textContent = token;
+            document.getElementById('tokenManual').textContent = token;
+            
+            generateQRCode(token);
+            addActivity(`Token WhatsApp gerado: ${token}`);
+            showToast('Token gerado com sucesso!', 'success');
+        }
 
-    // ── Toast ──
-    const toastIcons = {
-        success: 'fa-circle-check',
-        error:   'fa-circle-xmark',
-        info:    'fa-circle-info',
-        warning: 'fa-triangle-exclamation'
-    };
+        function generateQRCode(data) {
+            const qrContainer = document.getElementById('qrCode');
+            qrContainer.innerHTML = '';
+            
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('viewBox', '0 0 200 200');
+            svg.setAttribute('width', '200');
+            svg.setAttribute('height', '200');
+            
+            const seed = data.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+            const rng = (s) => { let x = Math.sin(s) * 10000; return x - Math.floor(x); };
+            
+            let cells = '';
+            const size = 21;
+            const cellSize = 8;
+            
+            for (let r = 0; r < size; r++) {
+                for (let c = 0; c < size; c++) {
+                    const inFinder = (r < 7 && c < 7) || (r < 7 && c >= size - 7) || (r >= size - 7 && c < 7);
+                    
+                    let filled = false;
+                    if (inFinder) {
+                        const lr = r % 7, lc = c % 7;
+                        filled = lr === 0 || lr === 6 || lc === 0 || lc === 6 || (lr >= 2 && lr <= 4 && lc >= 2 && lc <= 4);
+                    } else {
+                        filled = rng(seed + r * size + c) > 0.5;
+                    }
+                    
+                    if (filled) {
+                        cells += `<rect x="${c * cellSize}" y="${r * cellSize}" width="${cellSize - 1}" height="${cellSize - 1}" rx="1"/>`;
+                    }
+                }
+            }
+            
+            svg.innerHTML = `
+                <rect width="200" height="200" fill="white"/>
+                <g fill="#000000">${cells}</g>
+            `;
+            
+            qrContainer.appendChild(svg);
+        }
 
-    function showToast(text, type = 'success') {
-        document.querySelectorAll(`.toast.${type}`).forEach(el => el.remove());
+        function copyToken() {
+            if (state.whatsappToken) {
+                navigator.clipboard.writeText(state.whatsappToken).then(() => {
+                    showToast('Token copiado!', 'success');
+                }).catch(() => {
+                    showToast('Erro ao copiar', 'error');
+                });
+            }
+        }
 
-        const el = document.createElement('div');
-        el.className = `toast ${type}`;
-        el.setAttribute('role', 'alert');
-        el.setAttribute('aria-live', 'assertive');
-        el.innerHTML = `<i class="fa-solid ${toastIcons[type] || 'fa-circle-info'} toast-icon"></i><span>${sanitizeHTML(text)}</span>`;
-        document.body.appendChild(el);
+        function downloadQR() {
+            const qrSvg = document.querySelector('#qrCode svg');
+            if (qrSvg) {
+                const svgData = new XMLSerializer().serializeToString(qrSvg);
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                
+                img.onload = function() {
+                    canvas.width = 200;
+                    canvas.height = 200;
+                    ctx.drawImage(img, 0, 0);
+                    const link = document.createElement('a');
+                    link.href = canvas.toDataURL('image/png');
+                    link.download = `whatsapp-qr-${state.whatsappToken}.png`;
+                    link.click();
+                    showToast('QR Code baixado!', 'success');
+                };
+                
+                img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+            }
+        }
 
-        setTimeout(() => {
-            el.style.animation = 'slideOut 0.3s ease forwards';
-            setTimeout(() => el.remove(), 300);
-        }, 3500);
-    }
+        function resetWhatsapp() {
+            if (confirm('Deseja gerar um novo token?')) {
+                generateWhatsappToken();
+            }
+        }
 
-    // ── Som ──
-    function playSound() {
-        if (!state.soundEnabled) return;
-        try {
-            const ctx  = new (window.AudioContext || window.webkitAudioContext)();
-            const osc  = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(880, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(660, ctx.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.08, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
-            osc.start(ctx.currentTime);
-            osc.stop(ctx.currentTime + 0.15);
-        } catch(e) {}
-    }
+        function updateStats() {
+            const now = Date.now();
+            const elapsed = Math.floor((now - state.startTime) / 1000);
+            const hours = Math.floor(elapsed / 3600);
+            const minutes = Math.floor((elapsed % 3600) / 60);
+            
+            document.getElementById('totalEmails').textContent = state.totalEmails;
+            document.getElementById('totalMessages').textContent = state.totalMessages;
+            document.getElementById('whatsappStatus').textContent = state.whatsappConnected ? '1' : '0';
+            document.getElementById('uptime').textContent = `${hours}h ${minutes}m`;
+            
+            updateActivityLog();
+        }
 
-    // ── Formatar data ──
-    function formatDate(d) {
-        const now  = new Date();
-        const diff = now - d;
-        if (diff < 60000)    return 'Agora';
-        if (diff < 3600000)  return `${Math.floor(diff / 60000)}min atrás`;
-        if (diff < 86400000) return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-        return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-    }
+        function addActivity(text) {
+            const now = new Date().toLocaleTimeString('pt-BR');
+            state.activityLog.unshift({ text, time: now });
+            if (state.activityLog.length > 15) state.activityLog.pop();
+            saveSession();
+        }
+
+        function updateActivityLog() {
+            const log = document.getElementById('activityLog');
+            if (state.activityLog.length === 0) {
+                log.innerHTML = '<p style="color: var(--text-secondary); text-align: center;">Nenhuma atividade ainda</p>';
+                return;
+            }
+            
+            log.innerHTML = state.activityLog.map(item => `
+                <div style="padding: 0.75rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                    <span>${item.text}</span>
+                    <span style="font-size: 0.75rem; color: var(--text-tertiary);">${item.time}</span>
+                </div>
+            `).join('');
+        }
+
+        function updateStatusBadge() {
+            const badge = document.getElementById('statusBadge');
+            const text = document.getElementById('statusText');
+            
+            if (state.currentEmail) {
+                badge.classList.remove('offline');
+                text.textContent = 'Online';
+            } else {
+                badge.classList.add('offline');
+                text.textContent = 'Offline';
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('out');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function exportData() {
+            const data = {
+                email: state.currentEmail,
+                messages: state.messages,
+                activityLog: state.activityLog,
+                totalEmails: state.totalEmails,
+                totalMessages: state.totalMessages,
+                exportedAt: new Date().toISOString()
+            };
+
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `mailbot-export-${Date.now()}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+            
+            showToast('Dados exportados com sucesso!', 'success');
+            addActivity('Dados exportados');
+            closeSidebar();
+        }
+
+        function clearAllData() {
+            if (confirm('Tem certeza que deseja limpar todos os dados? Esta ação não pode ser desfeita.')) {
+                localStorage.removeItem('mailbot_session');
+                localStorage.removeItem('mailbot_theme');
+                location.reload();
+            }
+        }
+
+        function openSettings() {
+            showToast('Configurações em desenvolvimento', 'info');
+            closeSidebar();
+        }
+
+        function openCreatorModal() {
+            document.getElementById('creatorModal').classList.add('active');
+        }
+
+        function closeCreatorModal() {
+            document.getElementById('creatorModal').classList.remove('active');
+        }
+
+        document.getElementById('creatorModal').addEventListener('click', (e) => {
+            if (e.target.id === 'creatorModal') {
+                closeCreatorModal();
+            }
+        });
     </script>
 </body>
 </html>
