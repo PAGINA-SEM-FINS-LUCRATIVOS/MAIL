@@ -569,6 +569,10 @@
             transform: translateX(4px);
         }
 
+        .message-item.unread {
+            border-left: 4px solid var(--primary);
+        }
+
         .message-from {
             font-weight: 600;
             color: var(--primary-light);
@@ -588,6 +592,12 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+        }
+
+        .message-status {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-top: 0.5rem;
         }
 
         button {
@@ -635,6 +645,15 @@
         .btn-danger:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 14px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+            color: white;
+        }
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(16, 185, 129, 0.3);
         }
 
         .btn-sm { padding: 0.45rem 0.9rem; font-size: 0.75rem; border-radius: 9px; }
@@ -727,7 +746,8 @@
         }
 
         input[type="text"],
-        input[type="tel"] {
+        input[type="tel"],
+        textarea {
             flex: 1;
             padding: 0.65rem 1rem;
             background: var(--bg-card);
@@ -739,8 +759,15 @@
             transition: all 0.3s;
         }
 
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: 'Inter', sans-serif;
+        }
+
         input[type="text"]:focus,
-        input[type="tel"]:focus {
+        input[type="tel"]:focus,
+        textarea:focus {
             outline: none;
             border-color: var(--primary-light);
             background: var(--bg-card-hover);
@@ -834,7 +861,7 @@
             border: 1px solid var(--border-color);
             border-radius: 16px;
             padding: 2rem;
-            max-width: 600px;
+            max-width: 700px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
@@ -857,6 +884,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .modal-title {
@@ -886,18 +915,89 @@
             flex-wrap: wrap;
         }
 
-        .loading-spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+        .message-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .message-detail-from {
+            flex: 1;
+        }
+
+        .message-detail-from-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .message-detail-from-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-light);
+        }
+
+        .message-detail-date {
+            text-align: right;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .message-detail-subject {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .message-detail-body {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .reply-form {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .reply-form-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
         }
 
         @media (max-width: 768px) {
@@ -943,6 +1043,20 @@
             .sidebar {
                 width: 280px;
                 left: -280px;
+            }
+
+            .modal-content {
+                max-width: 95vw;
+                padding: 1.5rem;
+            }
+
+            .message-detail-header {
+                flex-direction: column;
+            }
+
+            .message-detail-date {
+                text-align: left;
+                margin-top: 0.5rem;
             }
         }
     </style>
@@ -1048,7 +1162,7 @@
 
             <div class="sidebar-footer">
                 <p><strong>MailBot Premium</strong></p>
-                <p>v4.1 - Otimizado</p>
+                <p>v4.2 - Completo</p>
                 <p style="margin-top: 0.75rem;">Criado por</p>
                 <p><strong>APELA WAR</strong></p>
             </div>
@@ -1173,11 +1287,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <div id="messageDetail" style="display: none;" class="card">
-                                <button class="btn-secondary btn-sm" onclick="closeMessage()" style="float: right;">✕</button>
-                                <div id="messageDetailContent"></div>
-                            </div>
                         </div>
                     </div>
 
@@ -1266,6 +1375,16 @@
         </div>
     </main>
 
+    <div class="modal" id="messageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Detalhes da Mensagem</h2>
+                <button class="modal-close" onclick="closeMessageModal()">✕</button>
+            </div>
+            <div id="messageModalContent"></div>
+        </div>
+    </div>
+
     <div class="modal" id="creatorModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1314,7 +1433,8 @@
             startTime: Date.now(),
             totalEmails: 0,
             totalMessages: 0,
-            activityLog: []
+            activityLog: [],
+            currentMessageId: null
         };
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -1498,13 +1618,11 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Atualizando...';
 
             try {
-                // Deleta o email atual
                 state.currentEmail = null;
                 state.accountId = null;
                 state.token = null;
                 state.messages = [];
                 
-                // Gera novo email
                 const domainsRes = await fetch('https://api.mail.tm/domains');
                 if (!domainsRes.ok) throw new Error('Erro ao obter domínios');
                 
@@ -1556,7 +1674,6 @@
                 addActivity(`Email atualizado para: ${newEmail}`);
                 saveSession();
 
-                // Atualiza a exibição
                 document.getElementById('emailValue').textContent = newEmail;
                 document.getElementById('messageCount').textContent = '0';
                 renderMessages();
@@ -1614,7 +1731,6 @@
                 
                 document.getElementById('emailForm').style.display = 'block';
                 document.getElementById('emailDisplay').style.display = 'none';
-                document.getElementById('messageDetail').style.display = 'none';
                 document.getElementById('messageCount').textContent = '0';
                 
                 updateStatusBadge();
@@ -1633,10 +1749,6 @@
             syncBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sincronizando...';
 
             try {
-                console.log('Tentando buscar mensagens...');
-                console.log('Account ID:', state.accountId);
-                console.log('Token:', state.token.substring(0, 20) + '...');
-
                 let url = `https://api.mail.tm/accounts/${state.accountId}/messages`;
                 
                 const res = await fetch(url, {
@@ -1648,10 +1760,7 @@
                     }
                 });
 
-                console.log('Status da resposta:', res.status);
-
                 if (res.status === 404) {
-                    console.log('Endpoint 404, tentando endpoint alternativo...');
                     url = `https://api.mail.tm/messages?account=${state.accountId}`;
                     
                     const altRes = await fetch(url, {
@@ -1686,8 +1795,6 @@
         }
 
         function processMessages(data) {
-            console.log('Dados recebidos:', data);
-
             const messages = data['hydra:member'] || data || [];
             
             state.messages = (Array.isArray(messages) ? messages : []).map(msg => ({
@@ -1728,44 +1835,114 @@
             }
 
             container.innerHTML = state.messages.map(msg => `
-                <div class="message-item" onclick="openMessage('${escapeHtml(msg.id)}')">
+                <div class="message-item ${!msg.seen ? 'unread' : ''}" onclick="openMessageModal('${escapeHtml(msg.id)}')">
                     <div class="message-from">${escapeHtml(msg.from)}</div>
                     <div class="message-subject">${escapeHtml(msg.subject)}</div>
                     <div class="message-preview">${escapeHtml(msg.text.substring(0, 100))}</div>
+                    <div class="message-status">${!msg.seen ? '<i class="fas fa-circle"></i> Não lida' : 'Lida'}</div>
                 </div>
             `).join('');
         }
 
-        function openMessage(id) {
+        function openMessageModal(id) {
             const msg = state.messages.find(m => m.id === id);
             if (!msg) return;
 
-            const detail = document.getElementById('messageDetail');
-            const content = document.getElementById('messageDetailContent');
+            state.currentMessageId = id;
+            const content = document.getElementById('messageModalContent');
             
-            content.innerHTML = `
-                <h3 style="margin-bottom: 1rem;">${escapeHtml(msg.subject)}</h3>
-                <div style="margin-bottom: 1rem;">
-                    <div style="font-size: 0.85rem; color: var(--text-secondary);">De:</div>
-                    <div style="color: var(--primary-light); font-weight: 600;">${escapeHtml(msg.from)}</div>
-                </div>
-                <div style="margin-bottom: 1rem;">
-                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Data:</div>
-                    <div>${new Date(msg.createdAt).toLocaleString('pt-BR')}</div>
-                </div>
-                <div style="margin-bottom: 1rem;">
-                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Mensagem:</div>
-                    <div style="background: var(--bg-card); padding: 1rem; border-radius: 8px; max-height: 400px; overflow-y: auto; border: 1px solid var(--border-color);">
-                        ${msg.html ? msg.html : escapeHtml(msg.text).replace(/\n/g, '<br>')}
+            const replyForm = `
+                <div class="reply-form">
+                    <div class="reply-form-title">Responder Mensagem</div>
+                    <div class="form-group">
+                        <label class="form-label">Para:</label>
+                        <input type="text" value="${escapeHtml(msg.from)}" readonly style="background: var(--bg-card-hover);">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Assunto:</label>
+                        <input type="text" id="replySubject" placeholder="Re: ${escapeHtml(msg.subject)}" value="Re: ${escapeHtml(msg.subject)}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mensagem:</label>
+                        <textarea id="replyBody" placeholder="Digite sua resposta aqui..."></textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn-primary" onclick="sendReply('${escapeHtml(msg.from)}')">
+                            <i class="fas fa-paper-plane"></i> Enviar Resposta
+                        </button>
+                        <button class="btn-secondary" onclick="closeMessageModal()">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
                     </div>
                 </div>
             `;
             
-            detail.style.display = 'block';
+            content.innerHTML = `
+                <div class="message-detail-header">
+                    <div class="message-detail-from">
+                        <div class="message-detail-from-label">De:</div>
+                        <div class="message-detail-from-value">${escapeHtml(msg.from)}</div>
+                    </div>
+                    <div class="message-detail-date">${new Date(msg.createdAt).toLocaleString('pt-BR')}</div>
+                </div>
+                
+                <div class="message-detail-subject">${escapeHtml(msg.subject)}</div>
+                
+                <div class="message-detail-body">
+                    ${msg.html ? msg.html : escapeHtml(msg.text).replace(/\n/g, '<br>')}
+                </div>
+                
+                <div class="message-actions">
+                    <button class="btn-secondary" onclick="markAsRead('${id}')">
+                        <i class="fas fa-check"></i> Marcar como Lida
+                    </button>
+                    <button class="btn-secondary" onclick="deleteMessage('${id}')">
+                        <i class="fas fa-trash"></i> Deletar
+                    </button>
+                </div>
+                
+                ${replyForm}
+            `;
+            
+            document.getElementById('messageModal').classList.add('active');
         }
 
-        function closeMessage() {
-            document.getElementById('messageDetail').style.display = 'none';
+        function closeMessageModal() {
+            document.getElementById('messageModal').classList.remove('active');
+            state.currentMessageId = null;
+        }
+
+        function markAsRead(id) {
+            const msg = state.messages.find(m => m.id === id);
+            if (msg) {
+                msg.seen = true;
+                saveSession();
+                renderMessages();
+                showToast('Marcado como lida', 'success');
+            }
+        }
+
+        function deleteMessage(id) {
+            if (confirm('Deseja deletar esta mensagem?')) {
+                state.messages = state.messages.filter(m => m.id !== id);
+                saveSession();
+                renderMessages();
+                closeMessageModal();
+                showToast('Mensagem deletada', 'success');
+            }
+        }
+
+        function sendReply(to) {
+            const subject = document.getElementById('replySubject').value;
+            const body = document.getElementById('replyBody').value;
+
+            if (!body.trim()) {
+                showToast('Digite uma mensagem para responder', 'error');
+                return;
+            }
+
+            showToast('Funcionalidade de resposta em desenvolvimento', 'info');
+            addActivity(`Resposta enviada para: ${to}`);
         }
 
         function toggleAutoRefresh() {
@@ -2010,6 +2187,12 @@
         document.getElementById('creatorModal').addEventListener('click', (e) => {
             if (e.target.id === 'creatorModal') {
                 closeCreatorModal();
+            }
+        });
+
+        document.getElementById('messageModal').addEventListener('click', (e) => {
+            if (e.target.id === 'messageModal') {
+                closeMessageModal();
             }
         });
     </script>
