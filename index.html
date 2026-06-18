@@ -861,10 +861,11 @@
             border: 1px solid var(--border-color);
             border-radius: 16px;
             padding: 2rem;
-            max-width: 700px;
-            width: 100%;
+            max-width: 900px;
+            width: 95%;
             max-height: 90vh;
             overflow-y: auto;
+            position: relative;
             animation: modalSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -949,10 +950,11 @@
         }
 
         .message-detail-subject {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             font-weight: 700;
             margin-bottom: 1.5rem;
             color: var(--text-primary);
+            word-break: break-word;
         }
 
         .message-detail-body {
@@ -963,7 +965,20 @@
             margin-bottom: 1.5rem;
             line-height: 1.6;
             word-wrap: break-word;
-            white-space: pre-wrap;
+            overflow-x: auto;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .message-detail-body img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .message-detail-body table {
+            max-width: 100% !important;
+            width: 100% !important;
+            height: auto !important;
         }
 
         .message-actions {
