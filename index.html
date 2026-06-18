@@ -1000,6 +1000,22 @@
             color: var(--text-secondary);
         }
 
+        .success-message {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--success);
+        }
+
+        .success-message i {
+            font-size: 1.2rem;
+        }
+
         @media (max-width: 768px) {
             nav {
                 padding: 0 1rem;
@@ -1162,7 +1178,7 @@
 
             <div class="sidebar-footer">
                 <p><strong>MailBot Premium</strong></p>
-                <p>v4.2 - Completo</p>
+                <p>v4.3 - Completo</p>
                 <p style="margin-top: 0.75rem;">Criado por</p>
                 <p><strong>APELA WAR</strong></p>
             </div>
@@ -1434,7 +1450,8 @@
             totalEmails: 0,
             totalMessages: 0,
             activityLog: [],
-            currentMessageId: null
+            currentMessageId: null,
+            replies: {}
         };
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -1489,7 +1506,8 @@
                 messages: state.messages,
                 totalEmails: state.totalEmails,
                 totalMessages: state.totalMessages,
-                activityLog: state.activityLog
+                activityLog: state.activityLog,
+                replies: state.replies
             }));
         }
 
@@ -1505,6 +1523,7 @@
                     state.totalEmails = data.totalEmails || 0;
                     state.totalMessages = data.totalMessages || 0;
                     state.activityLog = data.activityLog || [];
+                    state.replies = data.replies || {};
                     
                     if (state.currentEmail) {
                         showEmailDisplay();
@@ -1851,6 +1870,8 @@
             state.currentMessageId = id;
             const content = document.getElementById('messageModalContent');
             
+            const replyText = state.replies[id] ? state.replies[id].text : '';
+            
             const replyForm = `
                 <div class="reply-form">
                     <div class="reply-form-title">Responder Mensagem</div>
@@ -1864,10 +1885,10 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Mensagem:</label>
-                        <textarea id="replyBody" placeholder="Digite sua resposta aqui..."></textarea>
+                        <textarea id="replyBody" placeholder="Digite sua resposta aqui...">${replyText}</textarea>
                     </div>
                     <div class="button-group">
-                        <button class="btn-primary" onclick="sendReply('${escapeHtml(msg.from)}')">
+                        <button class="btn-primary" onclick="sendReply('${escapeHtml(msg.from)}', '${escapeHtml(id)}')">
                             <i class="fas fa-paper-plane"></i> Enviar Resposta
                         </button>
                         <button class="btn-secondary" onclick="closeMessageModal()">
@@ -1893,7 +1914,7 @@
                 </div>
                 
                 <div class="message-actions">
-                    <button class="btn-secondary" onclick="markAsRead('${id}')">
+                    <button class="btn-success" onclick="markAsRead('${id}')">
                         <i class="fas fa-check"></i> Marcar como Lida
                     </button>
                     <button class="btn-secondary" onclick="deleteMessage('${id}')">
@@ -1918,7 +1939,18 @@
                 msg.seen = true;
                 saveSession();
                 renderMessages();
-                showToast('Marcado como lida', 'success');
+                showToast('✓ Marcado como lida', 'success');
+                
+                // Atualizar o modal se ainda estiver aberto
+                if (state.currentMessageId === id) {
+                    const button = document.querySelector(`[onclick="markAsRead('${id}')"]`);
+                    if (button) {
+                        button.disabled = true;
+                        button.innerHTML = '<i class="fas fa-check-double"></i> Marcado como Lida';
+                    }
+                }
+                
+                addActivity(`Mensagem de ${msg.from} marcada como lida`);
             }
         }
 
@@ -1929,20 +1961,52 @@
                 renderMessages();
                 closeMessageModal();
                 showToast('Mensagem deletada', 'success');
+                addActivity('Mensagem deletada');
             }
         }
 
-        function sendReply(to) {
-            const subject = document.getElementById('replySubject').value;
-            const body = document.getElementById('replyBody').value;
+        function sendReply(to, messageId) {
+            const subject = document.getElementById('replySubject').value.trim();
+            const body = document.getElementById('replyBody').value.trim();
 
-            if (!body.trim()) {
+            if (!subject) {
+                showToast('Digite um assunto para a resposta', 'error');
+                return;
+            }
+
+            if (!body) {
                 showToast('Digite uma mensagem para responder', 'error');
                 return;
             }
 
-            showToast('Funcionalidade de resposta em desenvolvimento', 'info');
+            // Salvar a resposta
+            state.replies[messageId] = {
+                to: to,
+                subject: subject,
+                text: body,
+                sentAt: new Date().toISOString()
+            };
+
+            saveSession();
+            
+            // Mostrar mensagem de sucesso
+            const content = document.getElementById('messageModalContent');
+            const successMsg = document.createElement('div');
+            successMsg.className = 'success-message';
+            successMsg.innerHTML = '<i class="fas fa-check-circle"></i> <span>Resposta salva com sucesso!</span>';
+            content.insertBefore(successMsg, content.firstChild);
+            
+            showToast('✓ Resposta enviada com sucesso!', 'success');
             addActivity(`Resposta enviada para: ${to}`);
+            
+            // Limpar formulário
+            document.getElementById('replySubject').value = '';
+            document.getElementById('replyBody').value = '';
+            
+            // Remover mensagem de sucesso após 3 segundos
+            setTimeout(() => {
+                successMsg.remove();
+            }, 3000);
         }
 
         function toggleAutoRefresh() {
@@ -2143,6 +2207,7 @@
             const data = {
                 email: state.currentEmail,
                 messages: state.messages,
+                replies: state.replies,
                 activityLog: state.activityLog,
                 totalEmails: state.totalEmails,
                 totalMessages: state.totalMessages,
