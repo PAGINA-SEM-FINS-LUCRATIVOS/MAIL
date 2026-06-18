@@ -1709,6 +1709,9 @@
     <script>
     'use strict';
 
+    // ── Configurações da API ──
+    const API_BASE_URL = "https://api.tempmail.lol";
+
     // ── Utilitários de segurança ──
     function sanitizeHTML(str) {
         if (str === null || str === undefined) return '';
@@ -1764,12 +1767,12 @@
 
     let pollingTimer = null;
     let expiryTimer = null;
-    const EMAIL_TTL = 60 * 60 * 1000; // 1 hora
+    const EMAIL_TTL = 60 * 60 * 1000; // 1 hora na API tempmail.lol
 
     // ── Comandos do bot ──
     const commands = [
-        { name: '.mail',         icon: '<i class="fa-solid fa-envelope"></i>',       description: 'Instancia e exibe um novo endereço temporário corporativo.',           example: '.mail',         result: 'Email gerado: instance_8ca2@mailbot.com' },
-        { name: '.inbox',        icon: '<i class="fa-solid fa-inbox"></i>',           description: 'Força o barramento a listar mensagens pendentes na caixa.',            example: '.inbox',        result: 'Retornando log de 2 mensagens recebidas.' },
+        { name: '.mail',         icon: '<i class="fa-solid fa-envelope"></i>',       description: 'Instancia e exibe um novo endereço temporário corporativo.',           example: '.mail',         result: 'Email gerado: mb_x8a2j@tempmail.lol' },
+        { name: '.inbox',        icon: '<i class="fa-solid fa-inbox"></i>',           description: 'Força o barramento a listar mensagens pendentes na caixa.',            example: '.inbox',        result: 'Retornando log de mensagens recebidas.' },
         { name: '.newmail',      icon: '<i class="fa-solid fa-rotate"></i>',          description: 'Deleta o pool anterior gerando rotação limpa de inbox.',               example: '.newmail',      result: 'Pool anterior descartado. Nova rota ativa.' },
         { name: '.bloquearlink', icon: '<i class="fa-solid fa-link-slash"></i>',      description: 'Ativa o módulo de contenção e filtro de URLs nos grupos.',             example: '.bloquearlink', result: 'Módulo Anti-Link operacional e ativo.' },
         { name: '.liberarlink',  icon: '<i class="fa-solid fa-link"></i>',            description: 'Abre exceção temporária para compartilhamento de hiperlinks.',         example: '.liberarlink',  result: 'Contenção desativada.' },
@@ -1873,19 +1876,22 @@
         document.getElementById('emailAddress').value = state.currentEmail || '';
     }
 
-    // ── Gerar email ──
-    function generateEmail() {
+    // ── Gerar email (Real API tempmail.lol) ──
+    async function generateEmail() {
         const btn = document.getElementById('generateEmailBtn');
         if (btn) btn.disabled = true;
-        showToast('Alocando barramento de entrada...', 'info');
+        showToast('Conectando à rede de emails...', 'info');
 
-        setTimeout(() => {
-            const hash = Math.random().toString(36).substring(2, 9);
-            const domains = ['mailbotspace.com', 'cryptorouting.net', 'tempsecure.io', 'inboxvault.dev'];
-            const domain = domains[Math.floor(Math.random() * domains.length)];
+        try {
+            const response = await fetch(`${API_BASE_URL}/generate`);
+            const data = await response.json();
 
-            state.currentEmail   = `mb_${hash}@${domain}`;
-            state.currentToken   = Math.random().toString(36).substring(2, 10).toUpperCase();
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
+            state.currentEmail   = data.address;
+            state.currentToken   = data.token;
             state.emailCreatedAt = Date.now();
             state.messages       = [];
             state.unreadIds      = [];
@@ -1897,10 +1903,14 @@
             initPolling();
             updateStatusBadge();
 
-            if (btn) btn.disabled = false;
             playSound();
-            showToast('Instância alocada com sucesso!', 'success');
-        }, 800);
+            showToast('Email gerado com sucesso!', 'success');
+        } catch (error) {
+            console.error('Erro ao gerar email:', error);
+            showToast('Erro ao conectar com o serviço de email.', 'error');
+        } finally {
+            if (btn) btn.disabled = false;
+        }
     }
 
     // ── Copiar email ──
@@ -1911,7 +1921,6 @@
             showToast('Email copiado para área de transferência', 'success');
             playSound();
         }).catch(() => {
-            // Fallback
             const el = document.getElementById('emailAddress');
             el.select();
             document.execCommand('copy');
@@ -2011,7 +2020,7 @@
     }
 
     // ── Refresh inbox (manual) ──
-    function refreshInbox() {
+    async function refreshInbox() {
         const btn = document.getElementById('refreshBtn');
         const loader = document.getElementById('loadingIndicator');
         if (btn) btn.disabled = true;
@@ -2019,83 +2028,77 @@
 
         showToast('Escaneando pacotes pendentes...', 'info');
 
-        setTimeout(() => {
-            fetchMockMessages();
-            if (btn) btn.disabled = false;
-            if (loader) loader.style.display = 'none';
+        try {
+            await fetchRealMessages();
             playSound();
             showToast('Inbox sincronizado com sucesso', 'success');
-        }, 900);
+        } catch (error) {
+            showToast('Erro ao sincronizar mensagens.', 'error');
+        } finally {
+            if (btn) btn.disabled = false;
+            if (loader) loader.style.display = 'none';
+        }
     }
 
     // ── Refresh silencioso (polling) ──
-    function silentRefreshInbox() {
-        fetchMockMessages(true);
+    async function silentRefreshInbox() {
+        try {
+            await fetchRealMessages(true);
+        } catch (e) {}
     }
 
-    // ── Buscar mensagens (mock realista) ──
-    function fetchMockMessages(silent = false) {
-        const mockPool = [
-            {
-                id: 'msg_001',
-                from: 'security@github.com',
-                to: state.currentEmail,
-                subject: 'Verificação de Segurança — Novo Acesso Detectado',
-                date: new Date(),
-                content: 'Olá,\n\nDetectamos um novo acesso à sua conta GitHub a partir de um dispositivo não reconhecido.\n\nDispositivo: Chrome / Windows 11\nLocalização: São Paulo, BR\nHorário: ' + new Date().toLocaleString('pt-BR') + '\n\nSe foi você, pode ignorar este email.\nCaso contrário, acesse suas configurações de segurança imediatamente.\n\n— Equipe GitHub Security'
-            },
-            {
-                id: 'msg_002',
-                from: 'noreply@google.com',
-                to: state.currentEmail,
-                subject: 'Código de verificação: 847-291',
-                date: new Date(Date.now() - 120000),
-                content: 'Seu código de verificação do Google é:\n\n847-291\n\nEste código expira em 10 minutos.\nNão compartilhe este código com ninguém.\n\n— Google Account Team'
-            },
-            {
-                id: 'msg_003',
-                from: 'gateway@whatsapp.net',
-                to: state.currentEmail,
-                subject: 'API Node Connection Report — Handshake Completo',
-                date: new Date(Date.now() - 1800000),
-                content: 'Relatório de Conexão:\n\nSua sub-rotina persistente completou o handshake com sucesso.\nSessão mantida via WebSockets.\nUptime: 98h 42m\nPacotes processados: 1.284\nLatência média: 8ms\n\n— MailBot Daemon v2.0'
-            },
-            {
-                id: 'msg_004',
-                from: 'billing@stripe.com',
-                to: state.currentEmail,
-                subject: 'Recibo de Pagamento #INV-2024-0847',
-                date: new Date(Date.now() - 3600000),
-                content: 'Recibo de Pagamento\n\nValor: R$ 49,90\nData: ' + new Date().toLocaleDateString('pt-BR') + '\nStatus: Aprovado ✓\nMétodo: Cartão de crédito ****4242\n\nObrigado pela sua assinatura.\n\n— Stripe Billing'
+    // ── Buscar mensagens reais (API tempmail.lol) ──
+    async function fetchRealMessages(silent = false) {
+        if (!state.currentToken) return;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/auth/${state.currentToken}`);
+            const data = await response.json();
+
+            if (data.token === "invalid") {
+                stopPolling();
+                showToast('Sessão de email inválida ou expirada.', 'error');
+                return;
             }
-        ];
 
-        // Simular chegada de novas mensagens aleatoriamente no polling
-        const count = silent
-            ? (Math.random() > 0.7 ? Math.floor(Math.random() * 2) + 1 : 0)
-            : mockPool.length;
-
-        if (count === 0) return;
-
-        const newMessages = mockPool.slice(0, count);
-        const existingIds = state.messages.map(m => m.id);
-        const truly_new = newMessages.filter(m => !existingIds.includes(m.id));
-
-        if (truly_new.length === 0) return;
-
-        state.messages = [...truly_new, ...state.messages];
-        state.unreadIds = [...truly_new.map(m => m.id), ...state.unreadIds];
-
-        saveSession();
-        renderMessages();
-        updateStats();
-
-        if (silent && truly_new.length > 0) {
-            playSound();
-            if (state.notificationsEnabled) {
-                showToast(`${truly_new.length} nova(s) mensagem(ns) recebida(s)`, 'info');
-                sendBrowserNotification(truly_new[0]);
+            if (!data.email || data.email === null) {
+                return;
             }
+
+            // Mapear mensagens da API para o nosso formato
+            const apiMessages = data.email.map((m, index) => ({
+                id: m.id || `${m.from}-${m.subject}-${m.date}-${index}`,
+                from: m.from,
+                to: m.to,
+                subject: m.subject || "Sem Assunto",
+                date: new Date(m.date * 1000), // tempmail.lol envia unix timestamp
+                content: m.body || "Sem conteúdo.",
+                html: m.html || null
+            }));
+
+            const existingIds = state.messages.map(m => m.id);
+            const truly_new = apiMessages.filter(m => !existingIds.includes(m.id));
+
+            if (truly_new.length === 0) return;
+
+            // Inverter para manter a ordem cronológica correta (mais recentes primeiro)
+            state.messages = [...truly_new, ...state.messages];
+            state.unreadIds = [...truly_new.map(m => m.id), ...state.unreadIds];
+
+            saveSession();
+            renderMessages();
+            updateStats();
+
+            if (truly_new.length > 0) {
+                playSound();
+                if (state.notificationsEnabled) {
+                    showToast(`${truly_new.length} nova(s) mensagem(ns) recebida(s)`, 'info');
+                    sendBrowserNotification(truly_new[0]);
+                }
+            }
+        } catch (error) {
+            console.error('Erro ao buscar mensagens:', error);
+            if (!silent) throw error;
         }
     }
 
@@ -2146,7 +2149,6 @@
                 </div>`;
         }).join('');
 
-        // Acessibilidade: Enter abre mensagem
         container.querySelectorAll('.message-item').forEach(el => {
             el.addEventListener('keydown', e => {
                 if (e.key === 'Enter') el.click();
@@ -2254,7 +2256,6 @@
     }
 
     function generateQRSVG(data) {
-        // QR Code visual simplificado (representação estética)
         const seed = data.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
         const rng = (s) => { let x = Math.sin(s) * 10000; return x - Math.floor(x); };
 
@@ -2264,7 +2265,6 @@
 
         for (let r = 0; r < size; r++) {
             for (let c = 0; c < size; c++) {
-                // Finder patterns (cantos)
                 const inFinder =
                     (r < 7 && c < 7) ||
                     (r < 7 && c >= size - 7) ||
@@ -2354,7 +2354,6 @@
         const mins  = Math.floor((diff % 3600) / 60);
         document.getElementById('uptime').textContent = `${hours}h ${mins}m`;
 
-        // Badge de não lidos no header da inbox
         const badge = document.getElementById('unreadBadge');
         if (badge) {
             badge.textContent = unread;
@@ -2490,7 +2489,6 @@
     };
 
     function showToast(text, type = 'success') {
-        // Remover toasts existentes do mesmo tipo
         document.querySelectorAll(`.toast.${type}`).forEach(el => el.remove());
 
         const el = document.createElement('div');
